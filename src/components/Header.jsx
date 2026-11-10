@@ -222,6 +222,8 @@ function ChatCS({ open, onClose }) {
     }
   };
 
+  const isGeminiActive = apiKey.trim().startsWith('AIzaSy') && apiKey.trim().length >= 35;
+
   return (
     <Sheet open={open} onClose={onClose}>
       <div className="flex h-[75vh] max-h-[620px] flex-col text-slate-800">
@@ -235,7 +237,7 @@ function ChatCS({ open, onClose }) {
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-white">Kila ⚡ (CS BC-LAT)</span>
               <span className="flex items-center gap-1 rounded bg-gold-400/20 px-1.5 py-0.5 text-[10px] font-bold text-gold-300">
-                <Sparkles size={11} /> {apiKey ? 'Gemini AI Aktif' : 'Live AI'}
+                <Sparkles size={11} /> {isGeminiActive ? 'Gemini AI Aktif' : 'Live AI'}
               </span>
             </div>
             <div className="flex items-center gap-1 text-xs text-slate-300">
@@ -244,7 +246,7 @@ function ChatCS({ open, onClose }) {
           </div>
           <button
             onClick={() => setShowKeyModal((v) => !v)}
-            className={`rounded-full p-1.5 ${apiKey ? 'text-gold-400 bg-white/10' : 'text-slate-400 hover:bg-white/10'}`}
+            className={`rounded-full p-1.5 ${isGeminiActive ? 'text-gold-400 bg-white/10' : 'text-slate-400 hover:bg-white/10'}`}
             title="Setup Google Gemini API Key (Opsional)"
           >
             <Key size={18} />
@@ -278,6 +280,15 @@ function ChatCS({ open, onClose }) {
               >
                 Simpan
               </button>
+              {apiKey && (
+                <button
+                  onClick={() => saveApiKey('')}
+                  className="rounded-lg bg-rose-500/20 text-rose-300 px-2.5 py-1.5 font-bold hover:bg-rose-500/40"
+                  title="Hapus Kunci"
+                >
+                  Reset
+                </button>
+              )}
             </div>
           </div>
         )}

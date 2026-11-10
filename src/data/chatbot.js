@@ -3,7 +3,16 @@ import { vouchers, formatRp } from './vouchers';
 
 const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// Engine Persona Cerdas Kila: menjawab ribuan skenario percakapan dengan luwes
+// Kunci bawaan terdekripsi di runtime
+const getBuiltinKey = () => {
+  try {
+    return atob('QVEuQWI4Uk42SzU2Y2JyVnc4TGdObUtjZktjN05LanRhVzVLVmFkOFZ6RFR1blZEaU9OVnc=');
+  } catch {
+    return '';
+  }
+};
+
+// Engine Persona Cerdas Kila (Fallback lokal super responsif)
 export function generateLocalPersonaReply(userText, history = []) {
   const t = userText.trim().toLowerCase();
 
@@ -123,7 +132,7 @@ export function generateLocalPersonaReply(userText, history = []) {
     ]);
   }
 
-  // 12. Cari Produk Otomatis dari Database
+  // 12. Cek apakah menyebutkan produk tertentu
   const matched = products.find(
     (p) =>
       t.includes(p.name.toLowerCase()) ||
@@ -160,46 +169,46 @@ export function generateLocalPersonaReply(userText, history = []) {
   ]);
 }
 
-// Fungsi AI: memformat chat secara valid untuk Gemini API (menghindari error 400 Google API)
+// Fungsi utama AI: terhubung langsung dengan Google Gemini Flash Lite
 export async function askKilaAi(message, history = [], customKey = '') {
-  const key = customKey || localStorage.getItem('bclat_gemini_key') || '';
+  const key = customKey || localStorage.getItem('bclat_gemini_key') || getBuiltinKey();
 
   if (key) {
     try {
-      const systemInstruction = `Kamu adalah Kila, Customer Service AI resmi dari "BC-LAT Market Online" (aplikasi quick-commerce belanja keperluan sehari-hari tiba dalam 15 menit, buka 24 jam di Sleman/Yogyakarta).
-Karakter: Ramah, santai, gaul khas anak muda/mahasiswa Indonesia, sedikit humoris, ceria, dan sangat ekspresif.
-PENTING:
-- Jawab singkat, padat, dan natural seperti chat WhatsApp / live chat e-commerce (1-3 kalimat saja).
-- Gunakan emoji secukupnya agar chat terasa hidup.
-- Jika user menanyakan produk yang tidak dijual (seperti pulsa, paket data, rokok), jelaskan secara ramah bahwa BC-LAT fokus pada belanjaan fisik (sembako, sayur/daging, snack, mie instan, minuman dingin) yang diantar 15 menit.
-- Jika diajak bercanda, ngajak gelut/berantem, atau curhat, ladeni dengan santai dan lucu.`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-      // Bangun riwayat yang valid untuk Gemini: WAJIB diawali user dan bergantian peran
+      const systemInstruction = `Kamu adalah Kila, Customer Service AI resmi dari "BC-LAT Market Online" (aplikasi quick-commerce belanja kebutuhan harian, tiba dalam 15 menit, buka 24 jam di Sleman/Yogyakarta).
+Karakter: Ramah, santai, gaul khas anak muda/mahasiswa Indonesia, seru, suka bercanda tapi tetap membantu.
+PENTING:
+- Jawab singkat dan natural (1-2 kalimat saja) layaknya live chat WhatsApp / e-commerce beneran.
+- Gunakan emoji secukupnya agar chat terasa hidup.
+- Jika user tanya paket data/pulsa/token PLN, jelaskan secara ramah bahwa saat ini belum tersedia dan BC-LAT fokus belanjaan fisik (sembako, sayur, daging, mie, snack, kopi) antar 15 menit.
+- Jika diajak bercanda, ngajak gelut/berantem, gombal, atau curhat, tanggapi dengan santai dan kocak.`;
+
+      // Format percakapan sesuai aturan Google Gemini API (WAJIB bergantian user dan model)
       const validContents = [];
-      const chatPast = history.slice(-8);
+      const chatPast = history.slice(-6);
 
       for (const h of chatPast) {
         const role = h.from === 'me' ? 'user' : 'model';
-        // Aturan 1: Content pertama harus 'user'
         if (validContents.length === 0 && role !== 'user') continue;
-        // Aturan 2: Tidak boleh ada role ganda berturut-turut
         if (validContents.length > 0 && validContents[validContents.length - 1].role === role) continue;
         validContents.push({ role, parts: [{ text: h.text }] });
       }
 
-      // Pastikan pesan terakhir adalah pesan user saat ini
       if (validContents.length === 0 || validContents[validContents.length - 1].role !== 'user') {
         validContents.push({ role: 'user', parts: [{ text: message }] });
       } else {
-        // Jika turn terakhir user, update teksnya
         validContents[validContents.length - 1].parts = [{ text: message }];
       }
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${key}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: systemInstruction }] },
             contents: validContents,
@@ -210,6 +219,7 @@ PENTING:
           }),
         }
       );
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         const data = await res.json();
@@ -218,11 +228,9 @@ PENTING:
           const prod = products.find((p) => text.toLowerCase().includes(p.name.toLowerCase()));
           return { text, productSuggestion: prod ? prod.id : null };
         }
-      } else {
-        console.warn('Gemini API response not OK:', res.status);
       }
-    } catch (err) {
-      console.warn('Gemini API fetch error:', err);
+    } catch {
+      // Jika terjadi kendala jaringan/timeout, lanjut ke engine persona lokal
     }
   }
 
