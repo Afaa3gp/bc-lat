@@ -3,7 +3,7 @@ import { ChevronDown, Headphones, Home, MapPin, Receipt, Search, Send, ShoppingC
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { Logo, Sheet, SmartImage } from './ui';
-import { askKilaAi } from '../data/chatbot';
+import { askKilaAi, generateLocalPersonaReply } from '../data/chatbot';
 import { getProduct } from '../data/products';
 import { formatRp } from '../data/vouchers';
 
@@ -205,12 +205,16 @@ function ChatCS({ open, onClose }) {
           productSuggestion: replyData.productSuggestion,
         },
       ]);
-    } catch {
+    } catch (err) {
+      console.warn('AI chat error, using persona fallback:', err);
+      const fallback = generateLocalPersonaReply(msg, newMsgs);
       setMsgs((m) => [
         ...m,
         {
           from: 'cs',
-          text: 'Halo kak! Ada yang bisa Kila bantu lagi? ⚡',
+          text: fallback.text,
+          action: fallback.action,
+          productSuggestion: fallback.productSuggestion,
         },
       ]);
     } finally {
