@@ -1,14 +1,19 @@
-# Graph Report - Tugas_Bisnis  (2026-11-10)
+# Graph Report - Tugas_Bisnis  (2026-11-11)
 
 ## Corpus Check
-- 283 files · ~422,294 words
+- 288 files · ~427,643 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 4 file(s) not represented in the graph (top: (none) 2, .bak 1, .css 1)
+- Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .bak 1, .css 1)
 
 ## Summary
-- 4656 nodes · 4748 edges · 254 communities (168 shown, 86 thin omitted)
+- 4670 nodes · 4794 edges · 256 communities (168 shown, 88 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `f436507c`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - App.jsx
@@ -149,7 +154,7 @@
 - Caching Best Practices
 - Database Performance Best Practices
 - Eloquent Best Practices
-- Cookies
+- Commands
 - Ponytail Help
 - Blade and View Best Practices
 - Error Handling Best Practices
@@ -166,7 +171,7 @@
 - Fakes, Mocks, and Determinism
 - Test Suite Performance
 - Reviewing Tests
-- Session Storage
+- Perancangan Database BC-LAT Market Online (Quick-Commerce)
 - Naming and Structure
 - Attaching Screenshots and Videos to Pull Requests
 - Advanced Mocking with run-code
@@ -264,12 +269,13 @@
 - x.ai/README.md
 - zapier/README.md
 - idea-refine.sh script
+- vercel.json
 
 ## God Nodes (most connected - your core abstractions)
-1. `useUi()` - 29 edges
-2. `useStore()` - 25 edges
-3. `Code Review and Quality` - 19 edges
-4. `formatRp()` - 18 edges
+1. `useUi()` - 32 edges
+2. `useStore()` - 29 edges
+3. `formatRp()` - 22 edges
+4. `Code Review and Quality` - 19 edges
 5. `lucide-react` - 16 edges
 6. `Browser Automation with playwright-cli` - 16 edges
 7. `AppShell()` - 15 edges
@@ -292,11 +298,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (254 total, 86 thin omitted)
+## Communities (256 total, 88 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.07
-Nodes (84): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+76 more)
+Nodes (87): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+79 more)
 
 ### Community 1 - "4. Component Stylings"
 Cohesion: 0.04
@@ -659,8 +665,8 @@ Cohesion: 0.07
 Nodes (25): Connection Pool Exhaustion, Large Bundle Size, Missing Caching (Backend), Missing Image Optimization (Frontend), N+1 Queries (Backend), Optimization Patterns, Queries That Ignore Their Index, Unbounded Data Fetching (+17 more)
 
 ### Community 91 - "Browser Automation with playwright-cli"
-Cohesion: 0.07
-Nodes (27): Attaching screenshots and videos to pull requests, Browser Automation with playwright-cli, Browser Sessions, Commands, Core, DevTools, Emulation, Example: Debugging with DevTools (+19 more)
+Cohesion: 0.13
+Nodes (15): Attaching screenshots and videos to pull requests, Browser Automation with playwright-cli, Browser Sessions, Example: Debugging with DevTools, Example: Form submission, Example: Interactive session, Example: Multi-tab workflow, Installation (+7 more)
 
 ### Community 92 - "Shipping and Launch"
 Cohesion: 0.08
@@ -715,8 +721,8 @@ Cohesion: 0.09
 Nodes (21): Build Failure Triage, Common Rationalizations, Debugging and Error Recovery, Error-Specific Patterns, Instrumentation Guidelines, Overview, Red Flags, Runtime Error Triage (+13 more)
 
 ### Community 105 - "Local Storage"
-Cohesion: 0.10
-Nodes (20): Advanced: Multiple Operations, Authentication State Reuse, Clear All localStorage, Common Patterns, Delete Database, Delete Single Item, Get Single Value, IndexedDB (+12 more)
+Cohesion: 0.06
+Nodes (35): Advanced: Multiple Cookies or Custom Options, Advanced: Multiple Operations, Authentication State Reuse, Clear All Cookies, Clear All localStorage, Clear sessionStorage, Common Patterns, Cookies (+27 more)
 
 ### Community 106 - "Browser Session Management"
 Cohesion: 0.10
@@ -731,8 +737,8 @@ Cohesion: 0.11
 Nodes (18): Common Rationalizations, Output Files, Overview, Parallelization Opportunities, Plan Document Template, Planning and Task Breakdown, Red Flags, See Also (+10 more)
 
 ### Community 109 - "package.json"
-Cohesion: 0.14
-Nodes (17): devDependencies, tailwindcss@^4.0.0, @tailwindcss/vite@^4.0.0, vite@^6.0.0, @vitejs/plugin-react@^4.3.4, name, private, scripts (+9 more)
+Cohesion: 0.13
+Nodes (18): devDependencies, tailwindcss@^4.0.0, @tailwindcss/vite@^4.0.0, vite@^6.0.0, @vitejs/plugin-react@^4.3.4, name, private, scripts (+10 more)
 
 ### Community 110 - "ReOrder: Keep Your Regulars Ordering Direct"
 Cohesion: 0.11
@@ -846,9 +852,9 @@ Nodes (8): Add Indexes for Measured Query Patterns, Count Relationships Without 
 Cohesion: 0.22
 Nodes (8): Apply Global Scopes Sparingly, Cast Date and Time Attributes, Define Attribute Casts, Define Precise Relationship Types, Eloquent Best Practices, Keep Application Queries Model-Aware, Use Local Scopes for Reusable Queries, Use `whereBelongsTo()` for Relationship Queries
 
-### Community 138 - "Cookies"
-Cohesion: 0.22
-Nodes (9): Advanced: Multiple Cookies or Custom Options, Clear All Cookies, Cookies, Delete a Cookie, Filter Cookies by Domain, Filter Cookies by Path, Get Specific Cookie, List All Cookies (+1 more)
+### Community 138 - "Commands"
+Cohesion: 0.17
+Nodes (12): Commands, Core, DevTools, Emulation, Keyboard, Mouse, Navigation, Network (+4 more)
 
 ### Community 139 - "Ponytail Help"
 Cohesion: 0.22
@@ -914,9 +920,9 @@ Nodes (6): Common Errors, Global Fakes, How to Find a Slow Test, How to Run the 
 Cohesion: 0.29
 Nodes (6): Assertions, Coverage, Data and Determinism, Names and Structure, Reviewing Tests, Test Value
 
-### Community 155 - "Session Storage"
-Cohesion: 0.33
-Nodes (6): Clear sessionStorage, Delete Single Item, Get Single Value, List All sessionStorage Items, Session Storage, Set Value
+### Community 155 - "Perancangan Database BC-LAT Market Online (Quick-Commerce)"
+Cohesion: 0.40
+Nodes (4): 1. Entity-Relationship Diagram (ERD), 2. Hubungan Bisnis & Aturan Relasi (Business Logic), 3. File Terkait dalam Proyek, Perancangan Database BC-LAT Market Online (Quick-Commerce)
 
 ### Community 156 - "Naming and Structure"
 Cohesion: 0.33
@@ -967,7 +973,7 @@ Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
 
 ## Knowledge Gaps
-- **86 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **88 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -975,7 +981,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Test generation (plan → generate → heal)` connect `3. Heal` to `playwright-cli/SKILL.md`, `2. Generate`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.06940117687781239 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07078507078507079 - nodes in this community are weakly interconnected._
+- **Why does `2. Generate` connect `2. Generate` to `3. Heal`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `4. Component Stylings` be split into smaller, more focused modules?**
   _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
 - **Should `Components` be split into smaller, more focused modules?**
@@ -984,5 +992,3 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
 - **Should `Hardening Controls` be split into smaller, more focused modules?**
   _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
-- **Should `binance/DESIGN.md` be split into smaller, more focused modules?**
-  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._

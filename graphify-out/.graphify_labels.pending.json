@@ -137,7 +137,7 @@
   "135": "Caching Best Practices",
   "136": "Database Performance Best Practices",
   "137": "Eloquent Best Practices",
-  "138": "Cookies",
+  "138": "Commands",
   "139": "Ponytail Help",
   "140": "Blade and View Best Practices",
   "141": "Error Handling Best Practices",
@@ -154,7 +154,7 @@
   "152": "Fakes, Mocks, and Determinism",
   "153": "Test Suite Performance",
   "154": "Reviewing Tests",
-  "155": "Session Storage",
+  "155": "Perancangan Database BC-LAT Market Online (Quick-Commerce)",
   "156": "Naming and Structure",
   "157": "Attaching Screenshots and Videos to Pull Requests",
   "158": "Advanced Mocking with run-code",
@@ -252,5 +252,7 @@
   "250": "x.ai/README.md",
   "251": "zapier/README.md",
   "252": "idea-refine.sh script",
-  "253": "idea-refine.ps1"
+  "253": "idea-refine.ps1",
+  "254": "chat.js",
+  "255": "vercel.json"
 }
