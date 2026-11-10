@@ -196,20 +196,33 @@ function Footer() {
 /** Banner promo ala "Install aplikasi" di Astro */
 function InstallBanner() {
   const { tab } = useUi();
+  const { applyVoucher, showToast } = useStore();
   const [hidden, setHidden] = useState(false);
   if (hidden || tab !== 'home') return null;
+
+  const handleInstall = () => {
+    applyVoucher('FREEONGKIR');
+    showToast('🎁 Voucher FREEONGKIR berhasil diklaim & masuk keranjang!', 'success');
+    setHidden(true);
+  };
+
   return (
-    <div className="fixed inset-x-2 bottom-[68px] z-30 flex items-center gap-3 rounded-2xl bg-sky-50 p-3 shadow-lg ring-1 ring-sky-100 @3xl:inset-x-auto @3xl:right-6 @3xl:bottom-6 @3xl:w-96">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy-900">
+    <div className="fixed inset-x-2 bottom-[74px] z-30 flex items-center gap-3 rounded-2xl bg-sky-50 p-3 shadow-xl ring-1 ring-sky-200 @3xl:inset-x-auto @3xl:right-6 @3xl:bottom-6 @3xl:w-96 animate-pop">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy-900 shadow">
         <Zap size={22} className="fill-gold-400 text-gold-400" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[11px] text-slate-600">Dapatkan promo spesial</div>
-        <div className="text-sm leading-tight font-extrabold text-navy-900">Voucher s.d 25rb & Gratis Ongkir</div>
-        <div className="text-[10px] text-slate-500">Hanya di Aplikasi BC-LAT!</div>
+        <div className="text-[11px] text-slate-600 font-medium">Dapatkan promo spesial</div>
+        <div className="text-sm leading-tight font-extrabold text-navy-900">Voucher & Gratis Ongkir</div>
+        <div className="text-[10px] text-slate-500">Klaim voucher instan di sini!</div>
       </div>
-      <button className="rounded-xl bg-navy-900 px-3 py-2 text-xs font-bold text-gold-400">Install</button>
-      <button onClick={() => setHidden(true)} className="absolute -top-2 -right-1 rounded-full bg-white p-0.5 text-slate-500 shadow" aria-label="Tutup">
+      <button
+        onClick={handleInstall}
+        className="rounded-xl bg-navy-900 px-3 py-2 text-xs font-bold text-gold-400 hover:bg-navy-800 active:scale-95 transition"
+      >
+        Klaim
+      </button>
+      <button onClick={() => setHidden(true)} className="absolute -top-2 -right-1 rounded-full bg-white p-1 text-slate-500 shadow hover:bg-slate-100" aria-label="Tutup">
         <X size={14} />
       </button>
     </div>

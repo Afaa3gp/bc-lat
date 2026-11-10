@@ -3,12 +3,13 @@ import { ChevronRight, MapPin, ShoppingBag, Tag, Trash2, X, Zap } from 'lucide-r
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp, vouchers } from '../data/vouchers';
-import { ProductImage, QtyStepper } from './ui';
+import { ProductImage, QtyStepper, Sheet } from './ui';
 
 export default function CartPage() {
   const s = useStore();
   const { go, setCheckoutOpen } = useUi();
   const [code, setCode] = useState('');
+  const [addrOpen, setAddrOpen] = useState(false);
 
   if (!s.cartItems.length) {
     return (
@@ -30,16 +31,19 @@ export default function CartPage() {
       <div className="space-y-3">
         <h1 className="px-4 text-xl font-extrabold text-navy-900 @3xl:px-0">Keranjang ({s.cartCount} item)</h1>
 
-        <div className="mx-4 flex items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-slate-200/70 @3xl:mx-0">
-          <MapPin className="text-gold-600" size={20} />
+        <button
+          onClick={() => setAddrOpen(true)}
+          className="mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-2xl bg-white p-3 text-left ring-1 ring-slate-200/70 hover:bg-slate-50 transition active:scale-[0.99] @3xl:mx-0 @3xl:w-full"
+        >
+          <MapPin className="text-gold-600 shrink-0" size={20} />
           <div className="min-w-0 flex-1">
-            <div className="text-xs text-slate-500">Antar ke {s.address.label}</div>
+            <div className="text-xs text-slate-500">Antar ke <span className="font-bold text-navy-900">{s.address.label}</span> (Ganti)</div>
             <div className="truncate text-sm font-bold text-navy-900">{s.address.full}</div>
           </div>
-          <span className="flex items-center gap-1 rounded-full bg-navy-900 px-2.5 py-1 text-[11px] font-bold text-gold-400">
+          <span className="flex items-center gap-1 rounded-full bg-navy-900 px-2.5 py-1 text-[11px] font-bold text-gold-400 shrink-0">
             <Zap size={12} className="fill-gold-400" /> 15 mnt
           </span>
-        </div>
+        </button>
 
         <div className="mx-4 divide-y divide-slate-100 rounded-2xl bg-white ring-1 ring-slate-200/70 @3xl:mx-0">
           {s.cartItems.map(({ product, qty }) => (
@@ -132,10 +136,10 @@ export default function CartPage() {
         </div>
 
         {/* CTA: sticky di mobile */}
-        <div className="sticky bottom-16 z-10 mx-4 @3xl:static @3xl:mx-0">
+        <div className="sticky bottom-[74px] z-20 mx-4 pb-1 @3xl:static @3xl:mx-0 @3xl:pb-0">
           <button
             onClick={() => setCheckoutOpen(true)}
-            className="flex h-14 w-full items-center justify-between rounded-2xl bg-gold-400 px-5 font-extrabold text-navy-900 shadow-lg shadow-gold-500/30 hover:bg-gold-500 active:scale-[0.98]"
+            className="flex h-14 w-full items-center justify-between rounded-2xl bg-gold-400 px-5 font-extrabold text-navy-900 shadow-xl shadow-gold-500/30 hover:bg-gold-500 active:scale-[0.98] transition-transform"
           >
             <span>Pilih Pembayaran</span>
             <span className="flex items-center gap-1">
@@ -144,6 +148,37 @@ export default function CartPage() {
           </button>
         </div>
       </div>
+
+      {/* Modal Pilih Alamat Pengiriman */}
+      <Sheet open={addrOpen} onClose={() => setAddrOpen(false)}>
+        <div className="p-5 text-slate-800">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-navy-900">Pilih Alamat Pengiriman</h3>
+            <button onClick={() => setAddrOpen(false)} className="rounded-full p-1.5 hover:bg-slate-100">
+              <X size={20} />
+            </button>
+          </div>
+          <div className="space-y-2">
+            {s.addresses.map((a) => (
+              <button
+                key={a.id}
+                onClick={() => {
+                  s.setAddressId(a.id);
+                  setAddrOpen(false);
+                }}
+                className={`flex w-full gap-3 rounded-2xl border-2 p-3 text-left transition ${a.id === s.address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'}`}
+              >
+                <MapPin className={a.id === s.address?.id ? 'text-gold-600 shrink-0' : 'text-slate-400 shrink-0'} size={20} />
+                <div>
+                  <div className="text-sm font-bold text-navy-900">{a.label}</div>
+                  <div className="text-xs text-slate-600">{a.full}</div>
+                  {a.notes && <div className="mt-1 text-[11px] text-slate-400">Catatan: {a.notes}</div>}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </Sheet>
     </div>
   );
 }

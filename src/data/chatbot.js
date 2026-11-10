@@ -118,7 +118,45 @@ export function generateLocalPersonaReply(userText, history = []) {
     };
   }
 
-  // 11. Lapar / Haus / Ngantuk / Begadang
+  // 11. Lokasi Toko & Area Layanan
+  if (/lokasi|dimana|alamat|toko|cabang|daerah|area|sleman|jogja|yogyakarta|kaliurang/i.test(t)) {
+    return {
+      text: 'Dark Store kami berpusat di Jl. Kaliurang km 5, Sleman 🏪 Melayani pengantaran kilat 15 menit untuk seluruh radius 3 km (area kampus UGM, UNY, Pogung, Gejayan, dan sekitarnya)!',
+    };
+  }
+
+  // 12. Cara Pesan / Belanja
+  if (/cara pesan|cara belanja|cara order|gimana cara/i.test(t)) {
+    return {
+      text: 'Gampang banget kak! 1. Pilih produk yang kamu mau 2. Masukkan ke keranjang 3. Masukkan voucher (misal FREEONGKIR) 4. Pilih pembayaran (QRIS/COD/VA). Pesanan langsung diantar dalam 15 menit! 🛵',
+      action: { label: 'Mulai Pilih Produk', tab: 'home' },
+    };
+  }
+
+  // 13. Minimal Belanja
+  if (/minimal|min belanja|batas belanja/i.test(t)) {
+    return {
+      text: 'Tidak ada minimal belanja kak! Beli 1 mie instan pun tetap kami antar dalam 15 menit ⚡ Kalau mau gratis ongkir, cukup belanja minimal Rp30.000 dengan voucher FREEONGKIR!',
+      action: { label: 'Buka Keranjang', tab: 'cart' },
+    };
+  }
+
+  // 14. Identitas Kila / Siapa Kila
+  if (/kamu siapa|siapa kamu|siapa anda|kamu bot|kamu manusia|kila itu siapa/i.test(t)) {
+    return {
+      text: 'Aku Kila ⚡ Customer Service AI resmi BC-LAT! Aku yang bantu jawab pertanyaan kamu, kasih rekomendasi barang, dan mastiin belanjaanmu sampai kilat 15 menit!',
+    };
+  }
+
+  // 15. Terima kasih & Apresiasi
+  if (/makasih|terima kasih|thanks|thank you|thx|tengkyu|sip|siap|keren|mantap|oke|okee|okey/i.test(t)) {
+    return rand([
+      { text: 'Sama-sama kak! Senang bisa bantu kamu 😊 Selamat berbelanja dan jangan lupa klaim voucher diskonnya yaa ⚡' },
+      { text: 'Siap kak! Kalau ada butuh apa-apa lagi jangan ragu chat Kila ya, Kila standby 24 jam non-stop! ✨' },
+    ]);
+  }
+
+  // 16. Lapar / Haus / Ngantuk / Begadang
   if (/laper|lapar|haus|ngantuk|begadang|makan|minum|sarapan|ngemil/i.test(t)) {
     return rand([
       {
@@ -132,7 +170,7 @@ export function generateLocalPersonaReply(userText, history = []) {
     ]);
   }
 
-  // 12. Cek apakah menyebutkan produk tertentu
+  // 17. Cek apakah menyebutkan produk tertentu
   const matched = products.find(
     (p) =>
       t.includes(p.name.toLowerCase()) ||
@@ -147,7 +185,7 @@ export function generateLocalPersonaReply(userText, history = []) {
     };
   }
 
-  // 13. Pertanyaan umum "ada ... ga?"
+  // 18. Pertanyaan umum "ada ... ga?"
   const adaMatch = t.match(/ada\s+([a-zA-Z0-9\s]+)\s*(ga|gak|ngga|nggak|\?|$)/i);
   if (adaMatch) {
     const item = adaMatch[1].trim();
@@ -157,7 +195,7 @@ export function generateLocalPersonaReply(userText, history = []) {
     };
   }
 
-  // 14. Curhat / Pujian / Casual Banter
+  // 19. Curhat / Pujian / Casual Banter
   return rand([
     {
       text: `Haha Kila paham maksud kakak! Di BC-LAT kami siap bantu keperluan sehari-hari kamu 24 jam non-stop ⚡ Mau belanja sembako, mie, atau snack?`,

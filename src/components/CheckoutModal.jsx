@@ -15,7 +15,7 @@ const METHODS = [
 
 export default function CheckoutModal() {
   const { checkoutOpen, setCheckoutOpen, setTrackingId, go } = useUi();
-  const { total, placeOrder, cartCount } = useStore();
+  const { total, placeOrder, cartCount, showToast } = useStore();
   const [method, setMethod] = useState('QRIS');
   const [step, setStep] = useState('method'); // method | pay | processing | success
   const [order, setOrder] = useState(null);
@@ -86,7 +86,7 @@ export default function CheckoutModal() {
                   <img
                     src="/images/qris.jpg"
                     alt="QRIS BC-LAT"
-                    className="block max-h-[52vh] w-auto"
+                    className="block max-h-[38vh] w-auto mx-auto object-contain sm:max-h-[48vh]"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       e.currentTarget.nextSibling.style.display = 'block';
@@ -96,8 +96,8 @@ export default function CheckoutModal() {
                     <FakeQR seed={total} />
                   </div>
                 </div>
-                <div className="mt-4 text-sm text-slate-500">Scan QR dengan aplikasi e-wallet atau m-banking</div>
-                <div className="text-2xl font-extrabold text-navy-900">{formatRp(total)}</div>
+                <div className="mt-3 text-xs sm:text-sm text-slate-500">Scan QR dengan aplikasi e-wallet atau m-banking</div>
+                <div className="text-xl sm:text-2xl font-extrabold text-navy-900">{formatRp(total)}</div>
                 <div className="mt-2 rounded-lg bg-amber-50 px-3 py-1.5 text-[11px] font-semibold text-amber-700">
                   Mode demo: cukup tekan tombol di bawah, tidak perlu scan & bayar sungguhan.
                 </div>
@@ -113,9 +113,17 @@ export default function CheckoutModal() {
             {method === 'VA' && (
               <div className="rounded-2xl bg-slate-50 p-5">
                 <div className="text-xs text-slate-500">Nomor Virtual Account BCA</div>
-                <div className="mt-1 flex items-center justify-between">
-                  <span className="font-mono text-xl font-extrabold tracking-wider text-navy-900">8077 0812 3456 7890</span>
-                  <Copy size={18} className="text-navy-600" />
+                <div className="mt-2 flex items-center justify-between rounded-xl bg-white p-3 ring-1 ring-slate-200">
+                  <span className="font-mono text-lg sm:text-xl font-extrabold tracking-wider text-navy-900">8077 0812 3456 7890</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText('8077081234567890');
+                      showToast('Nomor VA BCA disalin!', 'success');
+                    }}
+                    className="flex items-center gap-1 rounded-lg bg-navy-900 px-3 py-1.5 text-xs font-bold text-gold-400 hover:bg-navy-800 active:scale-95 transition"
+                  >
+                    <Copy size={14} /> Salin
+                  </button>
                 </div>
                 <div className="mt-4 text-xs text-slate-500">Jumlah transfer</div>
                 <div className="text-xl font-extrabold text-navy-900">{formatRp(total)}</div>

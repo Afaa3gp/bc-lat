@@ -12,17 +12,26 @@ export default function BottomNav() {
     { key: 'profile', label: 'Profil', icon: User },
   ];
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur @3xl:hidden">
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur @3xl:hidden select-none"
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 6px)' }}
+    >
       <div className="mx-auto grid max-w-lg grid-cols-4">
         {items.map(({ key, label, icon: Icon, badge }) => {
           const active = tab === key;
           return (
-            <button key={key} onClick={() => go(key)} className="relative flex flex-col items-center gap-0.5 py-2.5">
+            <button
+              key={key}
+              onClick={() => go(key)}
+              className="relative flex flex-col items-center gap-0.5 py-2 active:scale-90 transition-transform"
+            >
               {active && <span className="absolute top-0 h-1 w-8 rounded-b-full bg-gold-400" />}
               <span className="relative">
                 <Icon size={22} className={active ? 'fill-navy-900/10 text-navy-900' : 'text-slate-400'} strokeWidth={active ? 2.5 : 2} />
                 {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">{badge}</span>
+                  <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white shadow-sm">
+                    {badge}
+                  </span>
                 )}
               </span>
               <span className={`text-[11px] ${active ? 'font-extrabold text-navy-900' : 'font-medium text-slate-500'}`}>{label}</span>

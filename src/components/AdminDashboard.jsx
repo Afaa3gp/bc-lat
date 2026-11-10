@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { AlertTriangle, Boxes, ChevronsRight, DollarSign, Package, ShoppingBag, Timer, TrendingUp, XCircle } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Boxes, ChevronsRight, DollarSign, Package, ShoppingBag, Timer, TrendingUp, XCircle } from 'lucide-react';
 import { orderStatus, useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { products } from '../data/products';
@@ -41,10 +41,18 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-4 px-4 py-4 @3xl:px-0 @3xl:py-6">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <div className="text-xs font-bold tracking-widest text-gold-600 uppercase">Mode Admin</div>
-          <h1 className="text-xl font-extrabold text-navy-900">Dashboard Dark Store — Kaliurang</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => go('home')}
+            className="flex items-center gap-1.5 rounded-xl bg-navy-900 px-3 py-2 text-xs font-bold text-gold-400 hover:bg-navy-800 active:scale-95 transition"
+          >
+            <ArrowLeft size={16} /> Ke Toko
+          </button>
+          <div>
+            <div className="text-[10px] font-bold tracking-widest text-gold-600 uppercase">Mode Admin</div>
+            <h1 className="text-lg sm:text-xl font-extrabold text-navy-900">Dashboard Dark Store — Kaliurang</h1>
+          </div>
         </div>
         <span className="flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" /> Toko buka 24 jam

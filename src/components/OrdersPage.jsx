@@ -114,7 +114,7 @@ function pointAt(t) {
 }
 
 function TrackingView({ order, onBack }) {
-  const { now, cancelOrder, reorder } = useStore();
+  const { now, cancelOrder, reorder, showToast } = useStore();
   const { go } = useUi();
   const st = orderStatus(order, now);
   const m = elapsedMinutes(order, now);
@@ -203,10 +203,20 @@ function TrackingView({ order, onBack }) {
                 {order.courier.vehicle} • {order.courier.plate}
               </div>
             </div>
-            <button className="rounded-full bg-slate-100 p-2 text-navy-800" aria-label="Chat kurir">
+            <button
+              onClick={() => showToast(`Kurir ${order.courier.name}: "Siap kak, pesanan segera tiba di ${order.address.label}!"`, 'success')}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-navy-800 hover:bg-slate-200 active:scale-95 transition"
+              aria-label="Chat kurir"
+              title="Chat Kurir"
+            >
               <MessageCircle size={18} />
             </button>
-            <button className="rounded-full bg-slate-100 p-2 text-navy-800" aria-label="Telepon kurir">
+            <button
+              onClick={() => showToast(`Menghubungi ${order.courier.name} (${order.courier.plate})... "Halo kak, kurir sudah dekat!"`, 'default')}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-navy-800 hover:bg-slate-200 active:scale-95 transition"
+              aria-label="Telepon kurir"
+              title="Telepon Kurir"
+            >
               <Phone size={18} />
             </button>
           </div>
