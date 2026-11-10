@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Headphones, Home, MapPin, Receipt, Search, Send, ShoppingCart, User, X, Zap, Plus, ArrowRight } from 'lucide-react';
+import { ChevronDown, Headphones, Home, MapPin, Receipt, Search, Send, ShoppingCart, User, X, Zap, Plus, ArrowRight, Key, Sparkles } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { Logo, Sheet, SmartImage } from './ui';
-import { getCsReply } from '../data/chatbot';
+import { askKilaAi } from '../data/chatbot';
 import { getProduct } from '../data/products';
 import { formatRp } from '../data/vouchers';
 
@@ -154,7 +154,7 @@ function SearchBox({ query, setQuery, setCategory, go, className }) {
 }
 
 function ChatCS({ open, onClose }) {
-  const { addToCart } = useStore();
+  const { addToCart, showToast } = useStore();
   const { go } = useUi();
   const [msgs, setMsgs] = useState([
     {
@@ -164,6 +164,8 @@ function ChatCS({ open, onClose }) {
   ]);
   const [text, setText] = useState('');
   const [typing, setTyping] = useState(false);
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('bclat_gemini_key') || '');
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -172,16 +174,28 @@ function ChatCS({ open, onClose }) {
     }
   }, [msgs, typing]);
 
-  const send = (t) => {
+  const saveApiKey = (k) => {
+    setApiKey(k);
+    if (k.trim()) {
+      localStorage.setItem('bclat_gemini_key', k.trim());
+      showToast('Kunci Gemini AI aktif!', 'success');
+    } else {
+      localStorage.removeItem('bclat_gemini_key');
+      showToast('Kunci AI dihapus, kembali ke mode lokal', 'default');
+    }
+    setShowKeyModal(false);
+  };
+
+  const send = async (t) => {
     const msg = (t ?? text).trim();
     if (!msg || typing) return;
     setText('');
-    setMsgs((m) => [...m, { from: 'me', text: msg }]);
+    const newMsgs = [...msgs, { from: 'me', text: msg }];
+    setMsgs(newMsgs);
     setTyping(true);
 
-    const delay = Math.min(800, Math.max(350, msg.length * 20));
-    setTimeout(() => {
-      const replyData = getCsReply(msg);
+    try {
+      const replyData = await askKilaAi(msg, newMsgs, apiKey);
       setMsgs((m) => [
         ...m,
         {
@@ -191,8 +205,17 @@ function ChatCS({ open, onClose }) {
           productSuggestion: replyData.productSuggestion,
         },
       ]);
+    } catch {
+      setMsgs((m) => [
+        ...m,
+        {
+          from: 'cs',
+          text: 'Halo kak! Ada yang bisa Kila bantu lagi? ⚡',
+        },
+      ]);
+    } finally {
       setTyping(false);
-    }, delay);
+    }
   };
 
   return (
@@ -207,16 +230,53 @@ function ChatCS({ open, onClose }) {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-white">Kila ⚡ (CS BC-LAT)</span>
-              <span className="rounded bg-gold-400/20 px-1.5 py-0.5 text-[10px] font-bold text-gold-300">Live AI</span>
+              <span className="flex items-center gap-1 rounded bg-gold-400/20 px-1.5 py-0.5 text-[10px] font-bold text-gold-300">
+                <Sparkles size={11} /> {apiKey ? 'Gemini AI Aktif' : 'Live AI'}
+              </span>
             </div>
             <div className="flex items-center gap-1 text-xs text-slate-300">
               {typing ? <span className="animate-pulse text-gold-400 font-semibold">Sedang mengetik…</span> : 'Online 24 Jam • Respon Kilat'}
             </div>
           </div>
+          <button
+            onClick={() => setShowKeyModal((v) => !v)}
+            className={`rounded-full p-1.5 ${apiKey ? 'text-gold-400 bg-white/10' : 'text-slate-400 hover:bg-white/10'}`}
+            title="Setup Google Gemini API Key (Opsional)"
+          >
+            <Key size={18} />
+          </button>
           <button onClick={onClose} className="rounded-full p-1.5 text-slate-300 hover:bg-white/10" aria-label="Tutup">
             <X size={20} />
           </button>
         </div>
+
+        {/* Modal input API Key (Opsional jika ingin 100% LLM Gemini murni) */}
+        {showKeyModal && (
+          <div className="border-b border-gold-400/30 bg-navy-950 p-3 text-white animate-fade-in text-xs">
+            <div className="flex items-center justify-between mb-1.5 font-bold text-gold-400">
+              <span>Integrasi Google Gemini AI (Opsional)</span>
+              <button onClick={() => setShowKeyModal(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <p className="text-slate-300 mb-2">
+              Masukkan API Key Gemini dari <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline text-gold-300">Google AI Studio (Gratis)</a> agar Kila 100% memakai model AI Gemini Flash:
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="AIzaSy..."
+                className="flex-1 rounded-lg bg-navy-900 px-3 py-1.5 text-white border border-slate-700 outline-none font-mono"
+              />
+              <button
+                onClick={() => saveApiKey(apiKey)}
+                className="rounded-lg bg-gold-400 px-3 py-1.5 font-extrabold text-navy-900 hover:bg-gold-500"
+              >
+                Simpan
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Message Area */}
         <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4 thin-scrollbar">
