@@ -25,3 +25,4 @@ dist-ssr
 
 # Graphify & cache temporary
 graphify-out/cache
+*.zip
