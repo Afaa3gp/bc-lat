@@ -120,7 +120,7 @@ export default function Header() {
             ))}
           </div>
           <p className="mt-4 rounded-xl bg-navy-900/5 p-3 text-xs text-slate-600">
-            ⚡ Semua alamat berada dalam radius 3 km dari <b>Dark Store BC-LAT Kaliurang</b> — pengantaran 15 menit dijamin.
+            ⚡ Semua alamat berada dalam radius 3 km dari <b>Dark Store BC-LAT Pamulang (UNPAM)</b> — pengantaran 15 menit dijamin.
           </p>
         </div>
       </Sheet>

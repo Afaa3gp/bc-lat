@@ -188,7 +188,7 @@ function TrackingView({ order, onBack }) {
                 </g>
               )}
             </svg>
-            <div className="absolute bottom-2 left-2 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900">Dark Store BC-LAT Kaliurang</div>
+            <div className="absolute bottom-2 left-2 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900">Dark Store BC-LAT Pamulang</div>
             <div className="absolute top-2 right-2 max-w-[45%] truncate rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900">{order.address.label}</div>
           </div>
 

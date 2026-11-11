@@ -42,7 +42,7 @@ export function generateLocalPersonaReply(userText, history = []) {
         productSuggestion: 'es-krim',
       },
       {
-        text: 'Kila mah cinta damai kak ✌️ Tapi kalau urusan kecepatan nganter belanjaan, kurir kami nomor satu ga ada tandingannya di Sleman! Coba tes pesen sekarang!',
+        text: 'Kila mah cinta damai kak ✌️ Tapi kalau urusan kecepatan nganter belanjaan, kurir kami nomor satu ga ada tandingannya di Pamulang! Coba tes pesen sekarang!',
         productSuggestion: 'mie-goreng',
       },
     ]);
@@ -55,7 +55,7 @@ export function generateLocalPersonaReply(userText, history = []) {
         text: 'Dua rius kak! Kami ga pernah main-main kalau urusan pesanan tiba 15 menit dan promo diskon 20% 😉 Kalau ga percaya, coba checkout satu barang deh!',
       },
       {
-        text: 'Serius lah kak, masa Kila bohong sama pelanggan tercinta 🥺 Dark Store kami beneran standby 24 jam di Kaliurang kok, siap meluncur kapan aja!',
+        text: 'Serius lah kak, masa Kila bohong sama pelanggan tercinta 🥺 Dark Store kami beneran standby 24 jam di dekat Universitas Pamulang (UNPAM) kok, siap meluncur kapan aja!',
       },
     ]);
   }
@@ -73,10 +73,10 @@ export function generateLocalPersonaReply(userText, history = []) {
     ]);
   }
 
-  // 5. Tanya Tugas Kuliah / Bisnis / Dosen
-  if (/tugas|dosen|kuliah|kelompok|presentasi|bisnis|matkul|nilai|kampus/i.test(t)) {
+  // 5. Tanya Tugas Kuliah / Bisnis / Dosen / Anggota Kelompok
+  if (/tugas|dosen|kuliah|kelompok|anggota|presentasi|bisnis|matkul|nilai|kampus|unpam|pamulang/i.test(t)) {
     return {
-      text: 'Betul banget kak! Ini adalah website demo bisnis kelompok kami untuk mata kuliah Bisnis 🎓 Kami mendemokan konsep Quick-Commerce dengan sistem Dark Store 15 menit (mirip Astro). Semoga bapak/ibu dosen ngasih nilai A yaa! Aamiin 🤲✨',
+      text: 'Betul banget kak! Ini adalah website demo bisnis kelompok kami (Citra, Arkhan, Lutpi, Bagas, dan Mushthofaa) di Universitas Pamulang (UNPAM) untuk mata kuliah Bisnis 🎓 Kami mendemokan konsep Quick-Commerce Dark Store 15 menit. Semoga bapak/ibu dosen ngasih nilai A yaa! Aamiin 🤲✨',
       action: { label: 'Buka Dashboard Admin Toko', tab: 'admin' },
     };
   }
@@ -119,9 +119,9 @@ export function generateLocalPersonaReply(userText, history = []) {
   }
 
   // 11. Lokasi Toko & Area Layanan
-  if (/lokasi|dimana|alamat|toko|cabang|daerah|area|sleman|jogja|yogyakarta|kaliurang/i.test(t)) {
+  if (/lokasi|dimana|alamat|toko|cabang|daerah|area|tangsel|tangerang|serpong|viktor/i.test(t)) {
     return {
-      text: 'Dark Store kami berpusat di Jl. Kaliurang km 5, Sleman 🏪 Melayani pengantaran kilat 15 menit untuk seluruh radius 3 km (area kampus UGM, UNY, Pogung, Gejayan, dan sekitarnya)!',
+      text: 'Dark Store kami berpusat di dekat Universitas Pamulang (UNPAM), Jl. Surya Kencana No. 1, Pamulang, Tangerang Selatan 🏪 Melayani pengantaran kilat 15 menit untuk seluruh radius 3 km (Kampus UNPAM Pusat, UNPAM Viktor, Witana Harja, dan sekitarnya)!',
     };
   }
 
@@ -180,7 +180,7 @@ export function generateLocalPersonaReply(userText, history = []) {
   );
   if (matched) {
     return {
-      text: `Ada banget kak! ${matched.name} (${matched.size}) harganya ${formatRp(matched.price)}. Kualitas terjamin dan stok masih aman di Dark Store Kaliurang! Mau langsung masukin ke keranjang?`,
+      text: `Ada banget kak! ${matched.name} (${matched.size}) harganya ${formatRp(matched.price)}. Kualitas terjamin dan stok masih aman di Dark Store Pamulang (UNPAM)! Mau langsung masukin ke keranjang?`,
       productSuggestion: matched.id,
     };
   }
@@ -216,7 +216,8 @@ export async function askKilaAi(message, history = [], customKey = '') {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-      const systemInstruction = `Kamu adalah Kila, Customer Service AI resmi dari "BC-LAT Market Online" (aplikasi quick-commerce belanja kebutuhan harian, tiba dalam 15 menit, buka 24 jam di Sleman/Yogyakarta).
+      const systemInstruction = `Kamu adalah Kila, Customer Service AI resmi dari "BC-LAT Market Online" (aplikasi quick-commerce belanja kebutuhan harian, tiba dalam 15 menit, buka 24 jam di area Universitas Pamulang / UNPAM, Tangerang Selatan).
+Tim pembuat proyek kelompok ini adalah: Citra, Arkhan, Lutpi, Bagas, dan Mushthofaa.
 Karakter: Ramah, santai, gaul khas anak muda/mahasiswa Indonesia, seru, suka bercanda tapi tetap membantu.
 PENTING:
 - Jawab singkat dan natural (1-2 kalimat saja) layaknya live chat WhatsApp / e-commerce beneran.

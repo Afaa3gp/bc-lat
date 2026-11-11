@@ -6,7 +6,7 @@ import { formatRp, vouchers } from '../data/vouchers';
 import { Logo, Sheet } from './ui';
 
 // Anggota kelompok demo bisnis
-const TEAM = ['Afaa3gp', 'Anggota 2', 'Anggota 3', 'Anggota 4', 'Anggota 5'];
+const TEAM = ['Citra', 'Arkhan', 'Lutpi', 'Bagas', 'Mushthofaa'];
 
 export default function ProfilePage() {
   const { orders, addresses, address, setAddressId, now, showToast } = useStore();
@@ -116,14 +116,14 @@ export default function ProfilePage() {
           </div>
           <p className="mt-3 text-sm text-slate-600 leading-relaxed">
             BC-LAT adalah <b>market online quick-commerce</b> untuk keperluan sehari-hari. Berbasis jaringan <b>Dark Store</b> di
-            wilayah kampus & pemukiman Sleman, kami menjamin pesanan tiba dalam <b>15 menit</b>, 24 jam non-stop.
+            wilayah kampus Universitas Pamulang (UNPAM) & sekitarnya, kami menjamin pesanan tiba dalam <b>15 menit</b>, 24 jam non-stop.
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             {[
               ['Target Pasar', 'Mahasiswa & keluarga muda'],
               ['Model Bisnis', 'Margin produk + micro-delivery'],
               ['Keunggulan', '15 Menit sampai, buka 24 jam'],
-              ['Area Layanan', 'Radius 3 km Hub Kaliurang'],
+              ['Area Layanan', 'Radius 3 km Hub UNPAM Pamulang'],
             ].map(([k, v]) => (
               <div key={k} className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
                 <div className="text-slate-500">{k}</div>

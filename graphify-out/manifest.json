@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   "src/components/AdminDashboard.jsx": {
-    "mtime": 1794353391.1643155,
-    "seen": 1794353470.4218893,
-    "ast_hash": "ad7d874706dd6150f3b9c21ae3e15ee8",
+    "mtime": 1794360252.4830172,
+    "seen": 1794360435.2548645,
+    "ast_hash": "2acd568ebfdc064ae09404387302af53",
     "semantic_hash": ""
   },
   "src/components/BannerSlider.jsx": {
@@ -84,9 +84,9 @@
     "semantic_hash": ""
   },
   "src/components/Header.jsx": {
-    "mtime": 1794359350.410748,
-    "seen": 1794359387.9103673,
-    "ast_hash": "d755a2aa39254b4257505ba6e634b4e1",
+    "mtime": 1794360230.5467045,
+    "seen": 1794360435.2558413,
+    "ast_hash": "d2e285dcbf5161c43468c27b4fe800c8",
     "semantic_hash": ""
   },
   "src/components/HomePage.jsx": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/components/OrdersPage.jsx": {
-    "mtime": 1794353339.425074,
-    "seen": 1794353470.4221919,
-    "ast_hash": "5a00f959a3ccf47fac843f2cc18705cc",
+    "mtime": 1794360250.6357024,
+    "seen": 1794360435.2560077,
+    "ast_hash": "481628e6ed3517e5d90260053b4f0cb3",
     "semantic_hash": ""
   },
   "src/components/ProductCard.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/components/ProfilePage.jsx": {
-    "mtime": 1794353205.4882188,
-    "seen": 1794353470.4224508,
-    "ast_hash": "4ce7033f3a0ced6100ad9b4ef82b88a1",
+    "mtime": 1794360248.6607225,
+    "seen": 1794360435.2563176,
+    "ast_hash": "18696bf59a3cc3e62026bbcc9ef3fadd",
     "semantic_hash": ""
   },
   "src/components/ui.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "src/context/StoreContext.jsx": {
-    "mtime": 1794250564.7001028,
-    "seen": 1794251048.8967376,
-    "ast_hash": "9b3d2b19b13472c155c2fcf8de52dcfc",
+    "mtime": 1794360126.7615886,
+    "seen": 1794360435.256479,
+    "ast_hash": "42442208d40d02c65dc5492386f1788d",
     "semantic_hash": ""
   },
   "src/context/UiContext.jsx": {
@@ -1800,9 +1800,9 @@
     "semantic_hash": ""
   },
   "src/data/chatbot.js": {
-    "mtime": 1794353427.90865,
-    "seen": 1794353470.4229004,
-    "ast_hash": "c27fda2914d6a65004b6f7d194043e7f",
+    "mtime": 1794360400.229683,
+    "seen": 1794360435.2568018,
+    "ast_hash": "8e8a6058571bdc7976d3a51f974c5f27",
     "semantic_hash": ""
   },
   "vercel.json": {

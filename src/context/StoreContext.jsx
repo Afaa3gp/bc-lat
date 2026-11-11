@@ -3,7 +3,7 @@ import { getProduct } from '../data/products';
 import { DELIVERY_FEE, evaluateVoucher, findVoucher } from '../data/vouchers';
 
 const StoreContext = createContext(null);
-const STORAGE_KEY = 'bclat-store-v1';
+const STORAGE_KEY = 'bclat-store-v2';
 
 /** Tahapan pesanan (dalam menit simulasi sejak order dibuat) */
 export const ORDER_STEPS = [
@@ -15,15 +15,15 @@ export const ORDER_STEPS = [
 export const ETA_MINUTES = 15;
 
 const COURIERS = [
-  { name: 'Budi Santoso', vehicle: 'Honda Beat Hitam', plate: 'AB 4521 KL' },
-  { name: 'Rina Kartika', vehicle: 'Yamaha Mio Biru', plate: 'AB 3317 UX' },
-  { name: 'Dimas Prasetyo', vehicle: 'Honda Vario Putih', plate: 'AB 6802 ZE' },
+  { name: 'Budi Santoso', vehicle: 'Honda Beat Hitam', plate: 'B 4521 KLA' },
+  { name: 'Rina Kartika', vehicle: 'Yamaha Mio Biru', plate: 'B 3317 UXA' },
+  { name: 'Dimas Prasetyo', vehicle: 'Honda Vario Putih', plate: 'B 6802 ZEA' },
 ];
 
 const defaultAddresses = [
-  { id: 'addr-1', label: 'Kost', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Kost Putri Kenanga No. 12, Jl. Kaliurang KM 5, Sleman', notes: 'Pagar hijau, titip satpam' },
-  { id: 'addr-2', label: 'Kampus', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Gedung Fakultas Ekonomi & Bisnis, Lobby Utama', notes: 'Hubungi saat sampai' },
-  { id: 'addr-3', label: 'Rumah', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Jl. Melati Raya No. 8, Depok, Sleman', notes: '' },
+  { id: 'addr-1', label: 'Kampus UNPAM', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Universitas Pamulang (UNPAM), Jl. Surya Kencana No. 1, Pamulang, Tangerang Selatan', notes: 'Lobby Utama / Gedung Kampus' },
+  { id: 'addr-2', label: 'UNPAM Viktor', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Universitas Pamulang Kampus 2 (Viktor), Jl. Raya Puspiptek, Serpong, Tangerang Selatan', notes: 'Hubungi saat sampai gerbang' },
+  { id: 'addr-3', label: 'Kost Pamulang', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Jl. Pajajaran No. 12, Pamulang Barat, Tangerang Selatan', notes: 'Dekat Kampus UNPAM' },
 ];
 
 const initialState = () => ({

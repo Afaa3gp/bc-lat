@@ -1,7 +1,7 @@
 # Graph Report - Tugas_Bisnis  (2026-11-11)
 
 ## Corpus Check
-- 288 files · ~427,731 words
+- 288 files · ~427,784 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .bak 1, .css 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fa2e92cf`
+- Built from commit: `a929396b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

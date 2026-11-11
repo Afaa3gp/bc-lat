@@ -51,7 +51,7 @@ export default function AdminDashboard() {
           </button>
           <div>
             <div className="text-[10px] font-bold tracking-widest text-gold-600 uppercase">Mode Admin</div>
-            <h1 className="text-lg sm:text-xl font-extrabold text-navy-900">Dashboard Dark Store — Kaliurang</h1>
+            <h1 className="text-lg sm:text-xl font-extrabold text-navy-900">Dashboard Dark Store — Pamulang (UNPAM)</h1>
           </div>
         </div>
         <span className="flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
