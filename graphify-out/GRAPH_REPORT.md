@@ -1,17 +1,17 @@
 # Graph Report - Tugas_Bisnis  (2026-11-11)
 
 ## Corpus Check
-- 288 files · ~427,643 words
+- 288 files · ~427,731 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .bak 1, .css 1)
 
 ## Summary
-- 4670 nodes · 4794 edges · 256 communities (168 shown, 88 thin omitted)
+- 4670 nodes · 4795 edges · 256 communities (168 shown, 88 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f436507c`
+- Built from commit: `fa2e92cf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -981,7 +981,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Test generation (plan → generate → heal)` connect `3. Heal` to `playwright-cli/SKILL.md`, `2. Generate`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07078507078507079 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07094594594594594 - nodes in this community are weakly interconnected._
 - **Why does `2. Generate` connect `2. Generate` to `3. Heal`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `4. Component Stylings` be split into smaller, more focused modules?**

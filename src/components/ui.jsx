@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Minus, Plus, Zap } from 'lucide-react';
 import { getCategory } from '../data/categories';
 
@@ -99,13 +100,15 @@ export function SectionTitle({ title, action, onAction, icon }) {
 }
 
 /** Lapisan modal/bottom-sheet. Pada tampilan sempit tampil sebagai bottom sheet. */
-export function Sheet({ open, onClose, children, wide = false }) {
+export function Sheet({ open, onClose, children, wide = false, noScroll = false }) {
   if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center @3xl:items-center">
+  const content = (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center @3xl:items-center">
       <div className="animate-fade-in absolute inset-0 bg-navy-950/60 backdrop-blur-[2px]" onClick={onClose} />
       <div
-        className={`animate-slide-up relative max-h-[92%] w-full overflow-y-auto rounded-t-3xl bg-white thin-scrollbar @3xl:animate-pop @3xl:rounded-3xl ${
+        className={`animate-slide-up relative max-h-[90dvh] w-full ${
+          noScroll ? 'overflow-hidden' : 'overflow-y-auto thin-scrollbar'
+        } rounded-t-3xl bg-white shadow-2xl @3xl:animate-pop @3xl:max-h-[88vh] @3xl:rounded-3xl ${
           wide ? '@3xl:max-w-3xl' : '@3xl:max-w-lg'
         }`}
       >
@@ -113,6 +116,8 @@ export function Sheet({ open, onClose, children, wide = false }) {
       </div>
     </div>
   );
+  const portalTarget = typeof document !== 'undefined' ? document.getElementById('sheet-portal') || document.body : null;
+  return portalTarget ? createPortal(content, portalTarget) : content;
 }
 
 export const discountPct = (p) => Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);

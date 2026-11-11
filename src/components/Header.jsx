@@ -225,46 +225,46 @@ function ChatCS({ open, onClose }) {
   const isGeminiActive = apiKey.trim().startsWith('AIzaSy') && apiKey.trim().length >= 35;
 
   return (
-    <Sheet open={open} onClose={onClose}>
-      <div className="flex h-[75vh] max-h-[620px] flex-col text-slate-800">
+    <Sheet open={open} onClose={onClose} noScroll>
+      <div className="flex h-[82dvh] max-h-[82dvh] w-full flex-col overflow-hidden text-slate-800 @3xl:h-[75vh] @3xl:max-h-[620px]">
         {/* Header CS */}
-        <div className="flex items-center gap-3 border-b border-slate-100 bg-navy-900 p-4 text-white">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gold-400 text-navy-900 font-extrabold shadow">
-            <Zap size={22} className="fill-navy-900" />
-            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-navy-900 bg-emerald-500" />
+        <div className="flex shrink-0 items-center gap-2.5 border-b border-slate-100 bg-navy-900 px-3.5 py-3 text-white sm:gap-3 sm:p-4">
+          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400 font-extrabold text-navy-900 shadow sm:h-10 sm:w-10">
+            <Zap size={20} className="fill-navy-900" />
+            <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-navy-900 bg-emerald-500" />
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-white">Kila ⚡ (CS BC-LAT)</span>
-              <span className="flex items-center gap-1 rounded bg-gold-400/20 px-1.5 py-0.5 text-[10px] font-bold text-gold-300">
-                <Sparkles size={11} /> {isGeminiActive ? 'Gemini AI Aktif' : 'Live AI'}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="truncate text-sm font-extrabold text-white sm:text-base">Kila ⚡ (CS BC-LAT)</span>
+              <span className="flex shrink-0 items-center gap-1 rounded bg-gold-400/20 px-1.5 py-0.5 text-[10px] font-bold text-gold-300">
+                <Sparkles size={10} /> {isGeminiActive ? 'Gemini AI Aktif' : 'Live AI'}
               </span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-slate-300">
-              {typing ? <span className="animate-pulse text-gold-400 font-semibold">Sedang mengetik…</span> : 'Online 24 Jam • Respon Kilat'}
+            <div className="truncate text-[11px] text-slate-300 sm:text-xs">
+              {typing ? <span className="animate-pulse font-semibold text-gold-400">Sedang mengetik…</span> : 'Online 24 Jam • Respon Kilat'}
             </div>
           </div>
           <button
             onClick={() => setShowKeyModal((v) => !v)}
-            className={`rounded-full p-1.5 ${isGeminiActive ? 'text-gold-400 bg-white/10' : 'text-slate-400 hover:bg-white/10'}`}
+            className={`shrink-0 rounded-full p-2 ${isGeminiActive ? 'bg-white/10 text-gold-400' : 'text-slate-400 hover:bg-white/10'}`}
             title="Setup Google Gemini API Key (Opsional)"
           >
             <Key size={18} />
           </button>
-          <button onClick={onClose} className="rounded-full p-1.5 text-slate-300 hover:bg-white/10" aria-label="Tutup">
+          <button onClick={onClose} className="shrink-0 rounded-full p-2 text-slate-300 hover:bg-white/10" aria-label="Tutup">
             <X size={20} />
           </button>
         </div>
 
         {/* Modal input API Key (Opsional jika ingin 100% LLM Gemini murni) */}
         {showKeyModal && (
-          <div className="border-b border-gold-400/30 bg-navy-950 p-3 text-white animate-fade-in text-xs">
-            <div className="flex items-center justify-between mb-1.5 font-bold text-gold-400">
+          <div className="shrink-0 border-b border-gold-400/30 bg-navy-950 p-3 text-xs text-white animate-fade-in">
+            <div className="mb-1.5 flex items-center justify-between font-bold text-gold-400">
               <span>Integrasi Google Gemini AI (Opsional)</span>
               <button onClick={() => setShowKeyModal(false)} className="text-slate-400 hover:text-white">✕</button>
             </div>
-            <p className="text-slate-300 mb-2">
-              Masukkan API Key Gemini dari <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline text-gold-300">Google AI Studio (Gratis)</a> agar Kila 100% memakai model AI Gemini Flash:
+            <p className="mb-2 text-slate-300">
+              Masukkan API Key Gemini dari <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-gold-300 underline">Google AI Studio (Gratis)</a> agar Kila 100% memakai model AI Gemini Flash:
             </p>
             <div className="flex gap-2">
               <input
@@ -272,18 +272,18 @@ function ChatCS({ open, onClose }) {
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="AIzaSy..."
-                className="flex-1 rounded-lg bg-navy-900 px-3 py-1.5 text-white border border-slate-700 outline-none font-mono"
+                className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-navy-900 px-3 py-1.5 font-mono text-white outline-none"
               />
               <button
                 onClick={() => saveApiKey(apiKey)}
-                className="rounded-lg bg-gold-400 px-3 py-1.5 font-extrabold text-navy-900 hover:bg-gold-500"
+                className="shrink-0 rounded-lg bg-gold-400 px-3 py-1.5 font-extrabold text-navy-900 hover:bg-gold-500"
               >
                 Simpan
               </button>
               {apiKey && (
                 <button
                   onClick={() => saveApiKey('')}
-                  className="rounded-lg bg-rose-500/20 text-rose-300 px-2.5 py-1.5 font-bold hover:bg-rose-500/40"
+                  className="shrink-0 rounded-lg bg-rose-500/20 px-2.5 py-1.5 font-bold text-rose-300 hover:bg-rose-500/40"
                   title="Hapus Kunci"
                 >
                   Reset
@@ -294,7 +294,7 @@ function ChatCS({ open, onClose }) {
         )}
 
         {/* Message Area */}
-        <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4 thin-scrollbar">
+        <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-slate-50 p-3.5 sm:p-4 thin-scrollbar">
           {msgs.map((m, i) => {
             const prod = m.productSuggestion ? getProduct(m.productSuggestion) : null;
             return (
@@ -311,7 +311,7 @@ function ChatCS({ open, onClose }) {
 
                 {/* Rekomendasi Produk jika ada */}
                 {prod && (
-                  <div className="mt-1.5 flex max-w-[85%] items-center gap-2.5 rounded-xl border border-gold-300/60 bg-amber-50/70 p-2 shadow-sm">
+                  <div className="mt-1.5 flex max-w-[88%] items-center gap-2.5 rounded-xl border border-gold-300/60 bg-amber-50/70 p-2 shadow-sm">
                     <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-slate-200">
                       <SmartImage src={prod.image} alt={prod.name} emoji={prod.emoji} className="h-full w-full" emojiClass="text-2xl" />
                     </div>
@@ -321,7 +321,7 @@ function ChatCS({ open, onClose }) {
                     </div>
                     <button
                       onClick={() => addToCart(prod.id)}
-                      className="flex items-center gap-1 rounded-lg bg-navy-900 px-2.5 py-1.5 text-[11px] font-extrabold text-gold-400 hover:bg-navy-800"
+                      className="flex shrink-0 items-center gap-1 rounded-lg bg-navy-900 px-2.5 py-1.5 text-[11px] font-extrabold text-gold-400 hover:bg-navy-800 active:scale-95 transition"
                     >
                       <Plus size={13} strokeWidth={3} /> Keranjang
                     </button>
@@ -335,7 +335,7 @@ function ChatCS({ open, onClose }) {
                       onClose();
                       go(m.action.tab);
                     }}
-                    className="mt-1.5 flex items-center gap-1.5 rounded-xl bg-gold-400 px-3 py-1.5 text-xs font-bold text-navy-900 shadow-sm hover:bg-gold-500"
+                    className="mt-1.5 flex items-center gap-1.5 rounded-xl bg-gold-400 px-3 py-1.5 text-xs font-bold text-navy-900 shadow-sm hover:bg-gold-500 active:scale-95 transition"
                   >
                     <span>{m.action.label}</span>
                     <ArrowRight size={13} strokeWidth={2.5} />
@@ -347,7 +347,7 @@ function ChatCS({ open, onClose }) {
 
           {/* Typing indicator bubble */}
           {typing && (
-            <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-slate-200/60 w-fit">
+            <div className="flex w-fit items-center gap-1.5 rounded-2xl rounded-bl-sm bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-slate-200/60">
               <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: '0ms' }} />
               <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: '150ms' }} />
               <span className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: '300ms' }} />
@@ -356,7 +356,7 @@ function ChatCS({ open, onClose }) {
         </div>
 
         {/* Quick Suggestion Chips */}
-        <div className="flex gap-2 overflow-x-auto border-t border-slate-100 bg-white px-4 py-2.5 no-scrollbar">
+        <div className="flex shrink-0 gap-2 overflow-x-auto border-t border-slate-100 bg-white px-3.5 py-2.5 no-scrollbar">
           {[
             'Ada promo apa?',
             'Berapa ongkirnya?',
@@ -369,7 +369,7 @@ function ChatCS({ open, onClose }) {
             <button
               key={q}
               onClick={() => send(q)}
-              className="shrink-0 rounded-full border border-navy-900/15 bg-slate-50 px-3 py-1 text-xs font-semibold text-navy-800 hover:bg-navy-900 hover:text-gold-400 transition"
+              className="shrink-0 rounded-full border border-navy-900/15 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-navy-800 hover:bg-navy-900 hover:text-gold-400 active:scale-95 transition"
             >
               {q}
             </button>
@@ -382,18 +382,19 @@ function ChatCS({ open, onClose }) {
             e.preventDefault();
             send();
           }}
-          className="flex gap-2 border-t border-slate-100 bg-white p-3"
+          className="flex shrink-0 items-center gap-2 border-t border-slate-100 bg-white px-3.5 pt-2.5"
+          style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 12px)' }}
         >
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Tulis pesan ke Kila…"
-            className="flex-1 rounded-xl bg-slate-100 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-gold-400"
+            className="min-w-0 flex-1 rounded-xl bg-slate-100 px-3.5 py-2.5 text-base sm:text-sm outline-none focus:ring-2 focus:ring-gold-400"
           />
           <button
             type="submit"
             disabled={!text.trim() || typing}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-400 text-navy-900 hover:bg-gold-500 disabled:opacity-40"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-400 text-navy-900 hover:bg-gold-500 active:scale-95 transition disabled:opacity-40"
             aria-label="Kirim"
           >
             <Send size={18} />

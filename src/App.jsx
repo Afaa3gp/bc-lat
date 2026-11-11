@@ -73,6 +73,7 @@ function AppShell() {
       <BottomNav />
       <ProductSheet />
       <CheckoutModal />
+      <div id="sheet-portal" />
       <Toast />
     </div>
   );
