@@ -73,11 +73,11 @@ export function generateLocalPersonaReply(userText, history = []) {
     ]);
   }
 
-  // 5. Tanya Tugas Kuliah / Bisnis / Dosen / Anggota Kelompok / NIB / HAKI / Skripsi
-  if (/tugas|dosen|kuliah|kelompok|anggota|presentasi|bisnis|matkul|nilai|kampus|unpam|pamulang|nib|izin|legalitas|haki|skripsi|kbli|oss/i.test(t)) {
+  // 5. Tanya Tugas Kuliah / Bisnis / Dosen / Anggota Kelompok
+  if (/tugas|dosen|kuliah|kelompok|anggota|presentasi|bisnis|matkul|nilai|kampus|unpam|pamulang|haki|skripsi/i.test(t)) {
     return {
-      text: 'Betul banget kak! Website BC-LAT ini dikembangkan oleh kelompok kami (Citra, Arkhan, Lutpi, Bagas, dan Mushthofaa) di Universitas Pamulang (UNPAM) 🎓 Sudah dilengkapi simulasi Legalitas NIB OSS RBA (1111260048291 - KBLI 47911), Peta GPS Live Pamulang, serta siap didaftarkan HAKI & dilanjutkan ke Skripsi/Project Work! ✨',
-      action: { label: 'Lihat Legalitas & Profil', tab: 'profile' },
+      text: 'Betul banget kak! Website BC-LAT ini dikembangkan oleh kelompok kami (Citra, Arkhan, Lutpi, Bagas, dan Mushthofaa) di Universitas Pamulang (UNPAM) 🎓 Dilengkapi simulasi Dark Store Hub Pamulang, Peta Google Maps Live, serta berbagai metode pembayaran instan! ✨',
+      action: { label: 'Lihat Profil Tim', tab: 'profile' },
     };
   }
 

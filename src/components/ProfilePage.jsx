@@ -15,7 +15,6 @@ export default function ProfilePage() {
   const [addrModal, setAddrModal] = useState(false);
   const [profileModal, setProfileModal] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
-  const [nibModal, setNibModal] = useState(false);
 
   const [pForm, setPForm] = useState({
     name: userProfile?.name || 'Kelompok Bisnis BC-LAT',
@@ -123,13 +122,6 @@ export default function ProfilePage() {
               onClick: () => setAddrModal(true),
             },
             {
-              icon: FileCheck2,
-              label: 'Legalitas Usaha & NIB (OSS RBA)',
-              hint: 'NIB: 1111260048291 • KBLI 47911 & HAKI',
-              onClick: () => setNibModal(true),
-              badge: 'Legalitas',
-            },
-            {
               icon: Tag,
               label: 'Voucher Saya',
               hint: `${vouchers.length} voucher aktif`,
@@ -180,8 +172,6 @@ export default function ProfilePage() {
               ['Model Bisnis', 'Margin produk + micro-delivery'],
               ['Keunggulan', '15 Menit sampai, buka 24 jam'],
               ['Area Layanan', 'Radius 3 km Hub UNPAM Pamulang'],
-              ['Nomor Induk Berusaha', 'NIB: 1111260048291 (OSS RBA)'],
-              ['KBLI & HAKI', 'KBLI 47911 • Hak Cipta Aplikasi'],
             ].map(([k, v]) => (
               <div key={k} className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
                 <div className="text-slate-500">{k}</div>
@@ -189,16 +179,6 @@ export default function ProfilePage() {
               </div>
             ))}
           </div>
-          <button
-            onClick={() => setNibModal(true)}
-            className="mt-3 flex w-full items-center justify-between rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200 hover:bg-emerald-100 transition"
-          >
-            <span className="flex items-center gap-2">
-              <ShieldCheck size={16} className="text-emerald-600" />
-              Terdaftar Sistem OSS RBA (NIB) & Pengajuan HAKI
-            </span>
-            <ChevronRight size={15} />
-          </button>
         </div>
 
         {/* Tim Kelompok Bisnis */}
@@ -284,67 +264,6 @@ export default function ProfilePage() {
 
       {/* Modal Alamat + Google Maps Interaktif */}
       <AddressModal open={addrModal} onClose={() => setAddrModal(false)} />
-
-      {/* Modal Legalitas Usaha & NIB (OSS RBA) */}
-      <Sheet open={nibModal} onClose={() => setNibModal(false)}>
-        <div className="p-5 text-slate-800">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <div className="text-[10px] font-extrabold tracking-widest text-emerald-600 uppercase">Dokumen Legalitas & Perizinan</div>
-              <h3 className="text-lg font-extrabold text-navy-900">NIB (Nomor Induk Berusaha) & HAKI</h3>
-            </div>
-            <button onClick={() => setNibModal(false)} className="rounded-full p-1 hover:bg-slate-100">
-              <X size={20} />
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-gradient-to-br from-navy-900 to-navy-800 p-4 text-white shadow">
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-300 ring-1 ring-emerald-400/30">
-                ✓ TERVERIFIKASI OSS RBA
-              </span>
-              <span className="text-[11px] text-slate-300">Kementerian Investasi / BKPM</span>
-            </div>
-            <div className="mt-3 text-xs text-slate-300">Nomor Induk Berusaha (NIB)</div>
-            <div className="font-mono text-xl font-extrabold tracking-wider text-gold-400">1111260048291</div>
-            <div className="mt-2 text-xs font-semibold text-white">PT / CV / UMKM BC-LAT Market Online Indonesia</div>
-            <div className="text-[11px] text-slate-300">Jl. Surya Kencana No. 1, Pamulang, Kota Tangerang Selatan, Banten</div>
-          </div>
-
-          <div className="mt-3 space-y-2 text-xs">
-            {[
-              ['Kode KBLI Utama', '47911 — Perdagangan Eceran Melalui Media Untuk Komoditi Makanan, Minuman, dan Sembako'],
-              ['Kode KBLI Pendukung', '47111 — Perdagangan Eceran Berbagai Macam Barang (Minimarket / Dark Store)'],
-              ['Skala Usaha & Risiko', 'UMKM / Startup Digital • Tingkat Risiko Rendah (Terbit Otomatis OSS)'],
-              ['Hak Kekayaan Intelektual', 'Hak Cipta Program Komputer (Aplikasi Web Quick-Commerce BC-LAT — Universitas Pamulang)'],
-              ['Pengembangan Lanjutan', 'Siap dilanjutkan untuk Proyek Kerja Praktik / Skripsi & Inkubasi Bisnis Kampus'],
-            ].map(([title, desc]) => (
-              <div key={title} className="rounded-xl border border-slate-200/80 bg-slate-50 p-3">
-                <div className="font-extrabold text-navy-900">{title}</div>
-                <div className="mt-0.5 text-slate-600">{desc}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <a
-              href="https://oss.go.id"
-              target="_blank"
-              rel="noreferrer"
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-navy-900/20 py-2.5 text-xs font-extrabold text-navy-900 hover:bg-slate-100"
-            >
-              <span>Portal Resmi OSS.go.id</span>
-              <ExternalLink size={13} />
-            </a>
-            <button
-              onClick={() => setNibModal(false)}
-              className="flex-1 rounded-xl bg-navy-900 py-2.5 text-xs font-extrabold text-gold-400 hover:bg-navy-800"
-            >
-              Tutup
-            </button>
-          </div>
-        </div>
-      </Sheet>
 
       {/* Modal Metode Pembayaran */}
       <Sheet open={paymentModal} onClose={() => setPaymentModal(false)}>
