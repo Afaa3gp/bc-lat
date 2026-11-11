@@ -3,12 +3,13 @@ import { ChevronDown, Headphones, Home, MapPin, Receipt, Search, Send, ShoppingC
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { Logo, Sheet, SmartImage } from './ui';
+import AddressModal from './AddressModal';
 import { askKilaAi, generateLocalPersonaReply } from '../data/chatbot';
 import { getProduct } from '../data/products';
 import { formatRp } from '../data/vouchers';
 
 export default function Header() {
-  const { address, addresses, setAddressId, cartCount } = useStore();
+  const { address, cartCount } = useStore();
   const { query, setQuery, setCategory, go, tab } = useUi();
   const [addrOpen, setAddrOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -76,11 +77,13 @@ export default function Header() {
           </div>
           <button
             onClick={() => setAddrOpen(true)}
-            className="flex max-w-[56%] min-w-0 items-center gap-2 rounded-2xl bg-white/10 px-3 py-2 text-left ring-1 ring-white/15 hover:bg-white/15 active:scale-[0.99] transition @3xl:max-w-sm"
+            className="flex max-w-[58%] min-w-0 items-center gap-2 rounded-2xl bg-white/10 px-3 py-2 text-left ring-1 ring-white/15 hover:bg-white/15 active:scale-[0.99] transition @3xl:max-w-sm"
           >
             <MapPin size={17} className="shrink-0 text-gold-400" />
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[10px] font-medium text-slate-300">Antar ke {address?.label}</div>
+              <div className="truncate text-[10px] font-medium text-slate-300">
+                Antar ke <b className="text-gold-300">{address?.label}</b> • {address?.phone || 'Isi No. HP'}
+              </div>
               <div className="truncate text-xs font-bold">{address?.full}</div>
             </div>
             <ChevronDown size={15} className="shrink-0 text-slate-300" />
@@ -91,71 +94,8 @@ export default function Header() {
         <SearchBox query={query} setQuery={setQuery} setCategory={setCategory} go={go} className="mt-2.5 flex @3xl:hidden" />
       </div>
 
-      {/* Pilih alamat + Peta Interaktif UNPAM */}
-      <Sheet open={addrOpen} onClose={() => setAddrOpen(false)}>
-        <div className="p-5 text-slate-800">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-extrabold text-navy-900">Pilih Lokasi Pengiriman</h3>
-              <p className="text-xs text-slate-500">Area layanan Dark Store Hub Pamulang (UNPAM)</p>
-            </div>
-            <button onClick={() => setAddrOpen(false)} className="rounded-full p-1 hover:bg-slate-100">
-              <X size={20} />
-            </button>
-          </div>
-
-          {/* Live Map Preview */}
-          <div className="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-            <iframe
-              title="Peta Lokasi Pengiriman UNPAM"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${(address?.lng || 106.737) - 0.006}%2C${(address?.lat || -6.3461) - 0.004}%2C${(address?.lng || 106.737) + 0.006}%2C${(address?.lat || -6.3461) + 0.004}&layer=mapnik&marker=${address?.lat || -6.3461}%2C${address?.lng || 106.737}`}
-              className="h-40 w-full border-0"
-              loading="lazy"
-            />
-            <div className="flex items-center justify-between bg-navy-900 px-3 py-1.5 text-[11px] text-white">
-              <span className="truncate font-semibold">📍 {address?.label} ({address?.distanceKm || 0.9} km dari Hub)</span>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${address?.lat || -6.3461},${address?.lng || 106.737}`}
-                target="_blank"
-                rel="noreferrer"
-                className="shrink-0 font-bold text-gold-400 underline"
-              >
-                Buka Google Maps ↗
-              </a>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            {addresses.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => {
-                  setAddressId(a.id);
-                  setAddrOpen(false);
-                }}
-                className={`flex w-full gap-3 rounded-2xl border-2 p-3 text-left transition ${a.id === address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'}`}
-              >
-                <MapPin className={a.id === address?.id ? 'mt-0.5 shrink-0 text-gold-600' : 'mt-0.5 shrink-0 text-slate-400'} size={20} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-bold text-navy-900">{a.label}</span>
-                    {a.distanceKm && (
-                      <span className="rounded-full bg-navy-900/10 px-2 py-0.5 text-[10px] font-bold text-navy-800">
-                        {a.distanceKm} km • ~{Math.max(5, Math.round(a.distanceKm * 5))} mnt
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-600">{a.full}</div>
-                  {a.notes && <div className="mt-1 text-[11px] text-slate-400">Catatan: {a.notes}</div>}
-                </div>
-              </button>
-            ))}
-          </div>
-          <p className="mt-3 rounded-xl bg-navy-900/5 p-3 text-xs text-slate-600">
-            ⚡ Semua titik berada dalam jangkauan <b>Dark Store BC-LAT Pamulang (Jl. Surya Kencana)</b> — pengantaran 15 menit dijamin.
-          </p>
-        </div>
-      </Sheet>
+      {/* Modal Lokasi Pengiriman, Nomor Telepon & Google Maps */}
+      <AddressModal open={addrOpen} onClose={() => setAddrOpen(false)} />
 
       <ChatCS open={chatOpen} onClose={() => setChatOpen(false)} />
     </header>

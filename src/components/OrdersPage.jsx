@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Bike, Check, ChevronRight, Compass, ExternalLink, Map, MapPin, MessageCircle, Navigation, Phone, Receipt, RotateCcw, Store, Zap } from 'lucide-react';
+import { ArrowLeft, Bike, Check, ChevronRight, ExternalLink, Globe, MapPin, MessageCircle, Navigation, Phone, Receipt, RotateCcw, Store, User, Zap } from 'lucide-react';
 import { DARK_STORE_HUB, ETA_MINUTES, ORDER_STEPS, elapsedMinutes, orderStatus, useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp } from '../data/vouchers';
@@ -57,6 +57,15 @@ export default function OrdersPage() {
                 </div>
                 <StatusBadge status={st} />
               </div>
+
+              {o.address && (
+                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-xl bg-slate-50 px-2.5 py-1.5 text-[11px] text-slate-600">
+                  <span className="font-bold text-navy-900">📍 {o.address.label}</span>
+                  <span>👤 {o.address.recipient || 'Pelanggan'}</span>
+                  {o.address.phone && <span className="font-semibold text-emerald-700">📞 {o.address.phone}</span>}
+                </div>
+              )}
+
               <div className="mt-3 flex items-center gap-2">
                 {o.items.slice(0, 4).map((it) => (
                   <div key={it.id} className="h-12 w-12 overflow-hidden rounded-lg bg-slate-50">
@@ -72,7 +81,7 @@ export default function OrdersPage() {
               <div className="mt-3 flex gap-2">
                 {active ? (
                   <button onClick={() => setTrackingId(o.id)} className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-navy-900 py-2 text-sm font-bold text-gold-400">
-                    <Zap size={14} className="fill-gold-400" /> Lacak Pesanan
+                    <Zap size={14} className="fill-gold-400" /> Lacak Live Maps
                   </button>
                 ) : (
                   <>
@@ -99,45 +108,39 @@ export default function OrdersPage() {
   );
 }
 
-// Rute peta stilistik: Dark Store -> rumah pelanggan
-const ROUTE = [
-  [40, 200], [40, 140], [120, 140], [120, 80], [220, 80], [220, 40], [300, 40],
-];
-function pointAt(t) {
-  const segs = ROUTE.slice(1).map((p, i) => [ROUTE[i], p, Math.hypot(p[0] - ROUTE[i][0], p[1] - ROUTE[i][1])]);
-  const total = segs.reduce((a, s) => a + s[2], 0);
-  let d = Math.min(Math.max(t, 0), 1) * total;
-  for (const [a, b, len] of segs) {
-    if (d <= len) return [a[0] + ((b[0] - a[0]) * d) / len, a[1] + ((b[1] - a[1]) * d) / len];
-    d -= len;
-  }
-  return ROUTE[ROUTE.length - 1];
-}
-
 function TrackingView({ order, onBack }) {
   const { now, cancelOrder, reorder, showToast } = useStore();
   const { go } = useUi();
-  const [mapMode, setMapMode] = useState('radar'); // radar | osm
+  const [mapMode, setMapMode] = useState('courier'); // courier | dest | satellite
   const st = orderStatus(order, now);
   const m = elapsedMinutes(order, now);
   const deliverStart = ORDER_STEPS[2].at;
   const deliverEnd = ORDER_STEPS[3].at;
   const rawProgress = (m - deliverStart) / (deliverEnd - deliverStart);
   const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
-  const [cx, cy] = pointAt(clampedProgress);
   const delivered = st.key === 'delivered';
   const remain = Math.max(0, deliverEnd - m) * 60;
   const mm = String(Math.floor(remain / 60)).padStart(2, '0');
   const ss = String(Math.floor(remain % 60)).padStart(2, '0');
-  const routeStr = ROUTE.map((p) => p.join(',')).join(' ');
 
-  const destLat = order.address?.lat || -6.3461;
-  const destLng = order.address?.lng || 106.7370;
-  const totalKm = order.address?.distanceKm || 0.9;
-  const remainKm = delivered ? 0 : Math.max(0.05, totalKm * (1 - clampedProgress)).toFixed(2);
+  const destLat = Number(order.address?.lat) || -6.3461;
+  const destLng = Number(order.address?.lng) || 106.7370;
+  const totalKm = Number(order.address?.distanceKm) || 0.9;
+  const remainKm = delivered ? '0.00' : Math.max(0.05, totalKm * (1 - clampedProgress)).toFixed(2);
   const speedKmh = delivered || order.cancelled || st.index < 2 ? 0 : 34 + Math.round(Math.sin(now / 1000) * 4);
   const curLat = (DARK_STORE_HUB.lat + (destLat - DARK_STORE_HUB.lat) * clampedProgress).toFixed(4);
   const curLng = (DARK_STORE_HUB.lng + (destLng - DARK_STORE_HUB.lng) * clampedProgress).toFixed(4);
+
+  // Pin yang ditampilkan di Google Maps (di-bucket per 20% agar iframe tidak berkedip tiap detik)
+  const bucketProgress = Math.round(clampedProgress * 5) / 5;
+  const mapLat = mapMode === 'courier'
+    ? (DARK_STORE_HUB.lat + (destLat - DARK_STORE_HUB.lat) * bucketProgress).toFixed(4)
+    : destLat;
+  const mapLng = mapMode === 'courier'
+    ? (DARK_STORE_HUB.lng + (destLng - DARK_STORE_HUB.lng) * bucketProgress).toFixed(4)
+    : destLng;
+  const mapType = mapMode === 'satellite' ? 'k' : 'm';
+
   const gmapsRouteUrl = `https://www.google.com/maps/dir/?api=1&origin=${DARK_STORE_HUB.lat},${DARK_STORE_HUB.lng}&destination=${destLat},${destLng}&travelmode=two-wheeler`;
 
   return (
@@ -171,22 +174,28 @@ function TrackingView({ order, onBack }) {
             </div>
           </div>
 
-          {/* Peta Pelacakan Real-Time Pamulang / UNPAM */}
+          {/* Google Maps Asli + Live Telemetry */}
           <div className="mx-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 @3xl:mx-0">
-            {/* Toolbar Peta */}
+            {/* Toolbar Peta Google Maps */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2">
-              <div className="flex rounded-xl bg-slate-200/80 p-0.5 text-xs font-bold">
+              <div className="flex rounded-xl bg-slate-200/80 p-0.5 text-[11px] font-bold">
                 <button
-                  onClick={() => setMapMode('radar')}
-                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'radar' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
+                  onClick={() => setMapMode('courier')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'courier' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
                 >
-                  <Navigation size={12} /> Radar Kurir
+                  <Navigation size={11} /> Posisi Kurir
                 </button>
                 <button
-                  onClick={() => setMapMode('osm')}
-                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'osm' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
+                  onClick={() => setMapMode('dest')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'dest' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
                 >
-                  <Map size={12} /> Peta Jalan (OSM)
+                  <MapPin size={11} /> Titik Tujuan
+                </button>
+                <button
+                  onClick={() => setMapMode('satellite')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'satellite' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
+                >
+                  <Globe size={11} /> Satelit
                 </button>
               </div>
               <a
@@ -195,88 +204,39 @@ function TrackingView({ order, onBack }) {
                 rel="noreferrer"
                 className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100"
               >
-                <span>Google Maps</span>
+                <span>Rute Google Maps</span>
                 <ExternalLink size={11} />
               </a>
             </div>
 
-            {mapMode === 'radar' ? (
-              <div className="relative bg-[#E6EEF6]">
-                <svg viewBox="0 0 340 240" className="block w-full">
-                  <defs>
-                    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
-                      <path d="M24 0H0V24" fill="none" stroke="#CBD5E1" strokeWidth="0.5" />
-                    </pattern>
-                  </defs>
-                  <rect x="0" y="0" width="340" height="240" fill="url(#grid)" opacity="0.65" />
+            {/* Iframe Google Maps Asli */}
+            <div className="relative h-64 sm:h-72 w-full bg-slate-100">
+              <iframe
+                key={`${mapLat}-${mapLng}-${mapType}`}
+                title="Google Maps Pelacakan Kurir BC-LAT"
+                src={`https://maps.google.com/maps?q=${mapLat},${mapLng}&hl=id&z=16&t=${mapType}&output=embed`}
+                className="h-full w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
 
-                  {/* Taman / Area Hijau Alun-Alun & Kampus UNPAM */}
-                  <rect x="195" y="16" width="132" height="62" rx="10" fill="#D1FAE5" />
-                  <rect x="12" y="18" width="84" height="75" rx="10" fill="#DCFCE7" />
-
-                  {/* Blok Bangunan Pamulang */}
-                  {[
-                    [62, 162, 52, 34],
-                    [136, 98, 62, 28],
-                    [232, 24, 46, 36],
-                    [20, 32, 68, 50],
-                    [150, 158, 168, 56],
-                    [242, 122, 78, 24],
-                  ].map(([x, y, w, h], i) => (
-                    <rect key={i} x={x} y={y} width={w} height={h} rx={5} fill="#CFD9E5" stroke="#B8C7D9" strokeWidth="1" />
-                  ))}
-
-                  {/* Jaringan Jalan Sekitar Pamulang */}
-                  <path d="M0 140 H340 M120 0 V240 M220 0 V240 M0 80 H340" stroke="#F8FAFC" strokeWidth="12" />
-                  <circle cx="120" cy="140" r="14" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2" />
-
-                  {/* Label Nama Jalan Asli Pamulang */}
-                  <text x="172" y="136" fontSize="6.5" fontWeight="700" fill="#64748B">JL. SURYA KENCANA</text>
-                  <text x="48" y="76" fontSize="6.5" fontWeight="700" fill="#64748B">JL. PAJAJARAN</text>
-                  <text x="124" y="152" fontSize="6" fontWeight="700" fill="#475569">Bundaran Pamulang</text>
-                  <text x="205" y="28" fontSize="6.5" fontWeight="800" fill="#065F46">KAWASAN KAMPUS UNPAM</text>
-
-                  {/* Jalur Rute Pengantaran */}
-                  <polyline points={routeStr} fill="none" stroke="#FFFFFF" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
-                  <polyline points={routeStr} fill="none" stroke="#F59E0B" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.35" />
-                  <polyline points={routeStr} fill="none" stroke="#0B132B" strokeWidth="3.5" strokeDasharray="3 6" strokeLinecap="round" strokeLinejoin="round" />
-
-                  {/* Titik Dark Store Hub Pamulang */}
-                  <circle cx="40" cy="200" r="20" fill="#0B132B" opacity="0.12" />
-                  <circle cx="40" cy="200" r="13" fill="#0B132B" stroke="#fff" strokeWidth="2" />
-                  <text x="40" y="204" textAnchor="middle" fontSize="12">🏪</text>
-
-                  {/* Titik Tujuan (UNPAM / Pelanggan) */}
-                  <circle cx="300" cy="40" r="20" fill="#F59E0B" opacity="0.2" />
-                  <circle cx="300" cy="40" r="13" fill="#F59E0B" stroke="#fff" strokeWidth="2" />
-                  <text x="300" y="44" textAnchor="middle" fontSize="12">🎓</text>
-
-                  {/* Posisi Kurir Live */}
-                  {!order.cancelled && (
-                    <g style={{ transition: 'transform 1s linear' }} transform={`translate(${cx} ${cy})`}>
-                      <circle r="18" fill="#F59E0B" opacity="0.25" />
-                      <circle r="13" fill="#fff" stroke="#0B132B" strokeWidth="3" />
-                      <text y="5" textAnchor="middle" fontSize="13" className="animate-ride">🛵</text>
-                    </g>
-                  )}
-                </svg>
-                <div className="absolute bottom-2 left-2 rounded-lg bg-navy-900/90 px-2.5 py-1 text-[10px] font-bold text-white shadow">
-                  🏪 Hub Jl. Surya Kencana
+              {/* Floating Live Route Badge di atas Google Maps */}
+              <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 rounded-xl bg-navy-900/95 p-2.5 text-white shadow-lg backdrop-blur-sm">
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <span className="truncate text-slate-200">🏪 Hub Pamulang</span>
+                  <span className="rounded-full bg-gold-400 px-2 py-0.5 text-[10px] font-extrabold text-navy-900">
+                    {order.cancelled ? 'Dibatalkan' : delivered ? 'Tiba di Tujuan ✓' : st.index < 2 ? 'Menyiapkan di Hub' : `🛵 Kurir Melaju (${Math.round(clampedProgress * 100)}%)`}
+                  </span>
+                  <span className="truncate text-gold-300">📍 {order.address?.label}</span>
                 </div>
-                <div className="absolute top-2 right-2 max-w-[52%] truncate rounded-lg bg-white/95 px-2.5 py-1 text-[10px] font-extrabold text-navy-900 shadow ring-1 ring-slate-200">
-                  📍 {order.address.label}
+                <div className="relative mt-2 h-2 w-full overflow-hidden rounded-full bg-white/15">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-gold-400 transition-all duration-700"
+                    style={{ width: `${order.cancelled ? 0 : st.index < 2 ? 12 : Math.max(15, Math.round(clampedProgress * 100))}%` }}
+                  />
                 </div>
               </div>
-            ) : (
-              <div className="relative h-60 w-full bg-slate-100">
-                <iframe
-                  title="Peta OpenStreetMap UNPAM"
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${destLng - 0.008}%2C${destLat - 0.005}%2C${destLng + 0.008}%2C${destLat + 0.005}&layer=mapnik&marker=${destLat}%2C${destLng}`}
-                  className="h-full w-full border-0"
-                  loading="lazy"
-                />
-              </div>
-            )}
+            </div>
 
             {/* Bar Telemetri GPS Kurir */}
             <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 bg-white px-2 py-2 text-center text-[11px]">
@@ -307,7 +267,7 @@ function TrackingView({ order, onBack }) {
               </div>
             </div>
             <button
-              onClick={() => showToast(`Kurir ${order.courier.name}: "Siap kak, pesanan segera tiba di ${order.address.label}!"`, 'success')}
+              onClick={() => showToast(`Kurir ${order.courier.name}: "Siap kak ${order.address?.recipient || ''}, pesanan segera tiba di ${order.address.label}!"`, 'success')}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-navy-800 hover:bg-slate-200 active:scale-95 transition"
               aria-label="Chat kurir"
               title="Chat Kurir"
@@ -351,11 +311,27 @@ function TrackingView({ order, onBack }) {
             })}
           </div>
 
-          {/* Rincian */}
+          {/* Rincian Penerima, Nomor Telepon & Pesanan */}
           <div className="mx-4 rounded-2xl bg-white p-4 ring-1 ring-slate-200/70 @3xl:mx-0">
-            <div className="mb-2 text-sm font-extrabold text-navy-900">Rincian Pesanan</div>
-            <div className="mb-3 flex gap-2 text-xs text-slate-600">
-              <MapPin size={14} className="mt-0.5 shrink-0 text-gold-600" /> {order.address.full}
+            <div className="mb-2 text-sm font-extrabold text-navy-900">Rincian Pengiriman & Pesanan</div>
+            <div className="mb-3 space-y-1.5 rounded-xl bg-slate-50 p-3 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="flex items-center gap-1 font-extrabold text-navy-900">
+                  <User size={13} className="text-gold-600" /> {order.address?.recipient || 'Pelanggan BC-LAT'}
+                </span>
+                <span className="flex items-center gap-1 font-bold text-emerald-700">
+                  <Phone size={12} /> {order.address?.phone || '0812-3456-7890'}
+                </span>
+              </div>
+              <div className="flex gap-1.5 text-slate-600">
+                <MapPin size={14} className="mt-0.5 shrink-0 text-gold-600" />
+                <span>
+                  <b className="text-navy-900">{order.address?.label}:</b> {order.address?.full}
+                </span>
+              </div>
+              {order.address?.notes && (
+                <div className="text-[11px] text-slate-500">Catatan kurir: {order.address.notes}</div>
+              )}
             </div>
             {order.items.map((it) => (
               <div key={it.id} className="flex justify-between py-0.5 text-sm">

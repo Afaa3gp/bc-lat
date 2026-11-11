@@ -1,19 +1,47 @@
 import { useState } from 'react';
-import { ChevronRight, CreditCard, FileCheck2, Gift, HelpCircle, Info, MapPin, ShieldCheck, Star, Tag, Users, Store, Check, X, QrCode, Smartphone, Building2, Banknote, Copy, ExternalLink } from 'lucide-react';
+import { ChevronRight, CreditCard, Edit3, FileCheck2, Gift, HelpCircle, Info, Mail, MapPin, Phone, ShieldCheck, Star, Tag, User, Users, Store, X, QrCode, Smartphone, Building2, Banknote, ExternalLink } from 'lucide-react';
 import { orderStatus, useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp, vouchers } from '../data/vouchers';
 import { Logo, Sheet } from './ui';
+import AddressModal from './AddressModal';
 
 // Anggota kelompok demo bisnis
 const TEAM = ['Citra', 'Arkhan', 'Lutpi', 'Bagas', 'Mushthofaa'];
 
 export default function ProfilePage() {
-  const { orders, addresses, address, setAddressId, now, showToast } = useStore();
+  const { orders, addresses, address, userProfile, updateProfile, updateActiveAddressField, now, showToast } = useStore();
   const { go } = useUi();
   const [addrModal, setAddrModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
   const [nibModal, setNibModal] = useState(false);
+
+  const [pForm, setPForm] = useState({
+    name: userProfile?.name || 'Kelompok Bisnis BC-LAT',
+    phone: userProfile?.phone || '0812-3456-7890',
+    email: userProfile?.email || 'demo@bc-lat.web.id',
+  });
+
+  const openProfileEdit = () => {
+    setPForm({
+      name: userProfile?.name || 'Kelompok Bisnis BC-LAT',
+      phone: userProfile?.phone || '0812-3456-7890',
+      email: userProfile?.email || 'demo@bc-lat.web.id',
+    });
+    setProfileModal(true);
+  };
+
+  const saveProfileForm = (e) => {
+    e.preventDefault();
+    if (!pForm.name.trim() || !pForm.phone.trim()) {
+      showToast('Nama & nomor telepon wajib diisi', 'error');
+      return;
+    }
+    updateProfile(pForm);
+    updateActiveAddressField({ recipient: pForm.name, phone: pForm.phone });
+    setProfileModal(false);
+  };
 
   const done = orders.filter((o) => orderStatus(o, now).key === 'delivered');
   const spent = done.reduce((a, o) => a + o.total, 0);
@@ -24,19 +52,34 @@ export default function ProfilePage() {
     showToast('Kode referral BCLATTEMAN disalin! Bagikan ke temanmu 🎉', 'success');
   };
 
+  const initials = (userProfile?.name || 'BC')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('');
+
   return (
     <div className="space-y-3 py-4 @3xl:grid @3xl:grid-cols-2 @3xl:gap-5 @3xl:space-y-0 @3xl:py-6">
       <div className="space-y-3">
         {/* Kartu Profil Pengguna */}
         <div className="mx-4 overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 p-5 text-white shadow-md @3xl:mx-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-400 text-xl font-extrabold text-navy-900 shadow">
-              BC
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gold-400 text-xl font-extrabold text-navy-900 shadow">
+              {initials || 'BC'}
             </div>
-            <div className="flex-1">
-              <div className="text-lg font-extrabold">Kelompok Bisnis BC-LAT</div>
-              <div className="text-xs text-slate-300">0812-3456-7890 • demo@bclat.id</div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-lg font-extrabold">{userProfile?.name}</div>
+              <div className="truncate text-xs text-slate-300">
+                📞 {userProfile?.phone} • {userProfile?.email}
+              </div>
             </div>
+            <button
+              onClick={openProfileEdit}
+              className="flex shrink-0 items-center gap-1 rounded-xl bg-white/15 px-3 py-2 text-xs font-bold text-gold-300 ring-1 ring-white/20 hover:bg-white/25 active:scale-95 transition"
+            >
+              <Edit3 size={13} /> Ubah
+            </button>
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             {[
@@ -67,17 +110,24 @@ export default function ProfilePage() {
               highlight: true,
             },
             {
+              icon: User,
+              label: 'Ubah Data Diri & Nomor Telepon',
+              hint: `${userProfile?.name} • ${userProfile?.phone}`,
+              onClick: openProfileEdit,
+              badge: 'Profil',
+            },
+            {
+              icon: MapPin,
+              label: 'Alamat, GPS & Peta Google Maps',
+              hint: `${addresses.length} titik tersimpan • Aktif: ${address?.label}`,
+              onClick: () => setAddrModal(true),
+            },
+            {
               icon: FileCheck2,
               label: 'Legalitas Usaha & NIB (OSS RBA)',
               hint: 'NIB: 1111260048291 • KBLI 47911 & HAKI',
               onClick: () => setNibModal(true),
               badge: 'Legalitas',
-            },
-            {
-              icon: MapPin,
-              label: 'Alamat & Peta Lokasi',
-              hint: `${addresses.length} titik layanan (${address?.label})`,
-              onClick: () => setAddrModal(true),
             },
             {
               icon: Tag,
@@ -102,8 +152,6 @@ export default function ProfilePage() {
               label: 'Pusat Bantuan (Chat CS Kila)',
               hint: 'Online 24 jam dengan AI',
               onClick: () => {
-                const btn = document.querySelector('button[aria-label="Beranda BC-LAT"]')?.parentElement?.querySelector('button:has(svg)');
-                // Trigger Chat CS
                 document.querySelectorAll('button').forEach((b) => {
                   if (b.textContent?.includes('Chat CS')) b.click();
                 });
@@ -171,60 +219,71 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Modal Alamat + Peta Interaktif */}
-      <Sheet open={addrModal} onClose={() => setAddrModal(false)}>
-        <div className="p-5 text-slate-800">
-          <div className="mb-3 flex items-center justify-between">
+      {/* Modal Edit Profil & Nomor Telepon */}
+      <Sheet open={profileModal} onClose={() => setProfileModal(false)}>
+        <form onSubmit={saveProfileForm} className="p-5 text-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-extrabold text-navy-900">Alamat & Peta Pengiriman</h3>
-              <p className="text-xs text-slate-500">Terhubung ke Dark Store Hub Pamulang (UNPAM)</p>
+              <h3 className="text-lg font-extrabold text-navy-900">Ubah Profil & Nomor Telepon</h3>
+              <p className="text-xs text-slate-500">Digunakan otomatis untuk kontak kurir saat pengantaran</p>
             </div>
-            <button onClick={() => setAddrModal(false)} className="rounded-full p-1 hover:bg-slate-100">
+            <button type="button" onClick={() => setProfileModal(false)} className="rounded-full p-1 hover:bg-slate-100">
               <X size={20} />
             </button>
           </div>
-          <div className="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-            <iframe
-              title="Peta Alamat UNPAM"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${(address?.lng || 106.737) - 0.006}%2C${(address?.lat || -6.3461) - 0.004}%2C${(address?.lng || 106.737) + 0.006}%2C${(address?.lat || -6.3461) + 0.004}&layer=mapnik&marker=${address?.lat || -6.3461}%2C${address?.lng || 106.737}`}
-              className="h-40 w-full border-0"
-              loading="lazy"
+
+          <div>
+            <label className="mb-1 flex items-center gap-1.5 text-xs font-bold text-navy-900">
+              <User size={14} className="text-gold-600" /> Nama Lengkap / Akun
+            </label>
+            <input
+              type="text"
+              required
+              value={pForm.name}
+              onChange={(e) => setPForm({ ...pForm, name: e.target.value })}
+              placeholder="Masukkan nama lengkap"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
             />
           </div>
-          <div className="space-y-2.5">
-            {addresses.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => {
-                  setAddressId(a.id);
-                  setAddrModal(false);
-                  showToast(`Alamat diubah ke ${a.label}`, 'success');
-                }}
-                className={`flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left transition ${
-                  a.id === address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                <MapPin className={a.id === address?.id ? 'text-gold-600 mt-0.5' : 'text-slate-400 mt-0.5'} size={20} />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-navy-900">{a.label}</span>
-                    {a.id === address?.id && (
-                      <span className="flex items-center gap-0.5 rounded-full bg-gold-400 px-2 py-0.5 text-[10px] font-extrabold text-navy-900">
-                        <Check size={11} strokeWidth={3} /> Aktif
-                      </span>
-                    )}
-                    {a.distanceKm && (
-                      <span className="ml-auto text-[11px] font-semibold text-slate-500">{a.distanceKm} km</span>
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-600 mt-0.5">{a.full}</div>
-                  {a.notes && <div className="mt-1 text-[11px] text-slate-400">Catatan: {a.notes}</div>}
-                </div>
-              </button>
-            ))}
+
+          <div>
+            <label className="mb-1 flex items-center gap-1.5 text-xs font-bold text-navy-900">
+              <Phone size={14} className="text-emerald-600" /> Nomor Telepon / WhatsApp Aktif
+            </label>
+            <input
+              type="tel"
+              required
+              value={pForm.phone}
+              onChange={(e) => setPForm({ ...pForm, phone: e.target.value })}
+              placeholder="Contoh: 0812-3456-7890"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
+            />
           </div>
-        </div>
+
+          <div>
+            <label className="mb-1 flex items-center gap-1.5 text-xs font-bold text-navy-900">
+              <Mail size={14} className="text-sky-600" /> Alamat Email
+            </label>
+            <input
+              type="email"
+              value={pForm.email}
+              onChange={(e) => setPForm({ ...pForm, email: e.target.value })}
+              placeholder="email@domain.com"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 h-12 w-full rounded-xl bg-gold-400 font-extrabold text-navy-900 shadow-md hover:bg-gold-500 active:scale-[0.99] transition"
+          >
+            Simpan Perubahan
+          </button>
+        </form>
       </Sheet>
+
+      {/* Modal Alamat + Google Maps Interaktif */}
+      <AddressModal open={addrModal} onClose={() => setAddrModal(false)} />
 
       {/* Modal Legalitas Usaha & NIB (OSS RBA) */}
       <Sheet open={nibModal} onClose={() => setNibModal(false)}>

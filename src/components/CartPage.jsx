@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ChevronRight, MapPin, ShoppingBag, Tag, Trash2, X, Zap } from 'lucide-react';
+import { ChevronRight, Edit3, MapPin, Phone, ShoppingBag, Tag, Trash2, User, X, Zap } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp, vouchers } from '../data/vouchers';
-import { ProductImage, QtyStepper, Sheet } from './ui';
+import { ProductImage, QtyStepper } from './ui';
+import AddressModal from './AddressModal';
 
 export default function CartPage() {
   const s = useStore();
@@ -31,20 +32,90 @@ export default function CartPage() {
       <div className="space-y-3">
         <h1 className="px-4 text-xl font-extrabold text-navy-900 @3xl:px-0">Keranjang ({s.cartCount} item)</h1>
 
-        <button
-          onClick={() => setAddrOpen(true)}
-          className="mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-2xl bg-white p-3 text-left ring-1 ring-slate-200/70 hover:bg-slate-50 transition active:scale-[0.99] @3xl:mx-0 @3xl:w-full"
-        >
-          <MapPin className="text-gold-600 shrink-0" size={20} />
-          <div className="min-w-0 flex-1">
-            <div className="text-xs text-slate-500">Antar ke <span className="font-bold text-navy-900">{s.address.label}</span> (Ganti)</div>
-            <div className="truncate text-sm font-bold text-navy-900">{s.address.full}</div>
+        {/* Kartu Lokasi Pengiriman, Nomor Telepon & Google Maps */}
+        <div className="mx-4 overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 @3xl:mx-0">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-4 py-2.5">
+            <div className="flex items-center gap-2 text-xs font-extrabold text-navy-900">
+              <MapPin size={15} className="text-gold-600" />
+              <span>Detail Pengiriman & Nomor Telepon</span>
+            </div>
+            <button
+              onClick={() => setAddrOpen(true)}
+              className="flex items-center gap-1 rounded-lg bg-navy-900 px-2.5 py-1 text-[11px] font-bold text-gold-400 hover:bg-navy-800 active:scale-95 transition"
+            >
+              <Edit3 size={11} /> Pilih Peta / Alamat
+            </button>
           </div>
-          <span className="flex items-center gap-1 rounded-full bg-navy-900 px-2.5 py-1 text-[11px] font-bold text-gold-400 shrink-0">
-            <Zap size={12} className="fill-gold-400" /> 15 mnt
-          </span>
-        </button>
 
+          <div className="p-3.5 space-y-3">
+            {/* Alamat Aktif + Mini Map */}
+            <div
+              onClick={() => setAddrOpen(true)}
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200/80 bg-slate-50/60 p-2.5 hover:border-gold-400 transition"
+            >
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-200">
+                <iframe
+                  title="Mini Google Maps"
+                  src={`https://maps.google.com/maps?q=${s.address?.lat || -6.3461},${s.address?.lng || 106.737}&hl=id&z=15&output=embed`}
+                  className="pointer-events-none h-28 w-28 -translate-x-7 -translate-y-7 scale-90 border-0"
+                  loading="lazy"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-extrabold text-navy-900">{s.address?.label}</span>
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                    {s.address?.distanceKm || 0.9} km • 15 mnt ⚡
+                  </span>
+                </div>
+                <div className="mt-0.5 line-clamp-2 text-xs text-slate-600">{s.address?.full}</div>
+              </div>
+            </div>
+
+            {/* Form Cepat Penerima & Nomor Telepon/WA */}
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 flex items-center gap-1 text-[11px] font-bold text-slate-600">
+                  <User size={12} className="text-gold-600" /> Nama Penerima
+                </span>
+                <input
+                  type="text"
+                  value={s.address?.recipient || ''}
+                  onChange={(e) => s.updateActiveAddressField({ recipient: e.target.value })}
+                  placeholder="Masukkan nama penerima"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 flex items-center gap-1 text-[11px] font-bold text-slate-600">
+                  <Phone size={12} className="text-emerald-600" /> Nomor Telepon / WhatsApp
+                </span>
+                <input
+                  type="tel"
+                  value={s.address?.phone || ''}
+                  onChange={(e) => s.updateActiveAddressField({ phone: e.target.value })}
+                  placeholder="Contoh: 0812-3456-7890"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
+                />
+              </label>
+            </div>
+
+            <label className="block">
+              <span className="mb-1 block text-[11px] font-bold text-slate-600">
+                Catatan Lokasi / Patokan Kurir
+              </span>
+              <input
+                type="text"
+                value={s.address?.notes || ''}
+                onChange={(e) => s.updateActiveAddressField({ notes: e.target.value })}
+                placeholder="Mis: Titip di satpam lobby / rumah pagar hitam / nomor kamar kost..."
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-navy-900 outline-none focus:border-navy-900 focus:bg-white"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Daftar Produk di Keranjang */}
         <div className="mx-4 divide-y divide-slate-100 rounded-2xl bg-white ring-1 ring-slate-200/70 @3xl:mx-0">
           {s.cartItems.map(({ product, qty }) => (
             <div key={product.id} className="flex gap-3 p-3">
@@ -138,7 +209,13 @@ export default function CartPage() {
         {/* CTA: sticky di mobile */}
         <div className="sticky bottom-[74px] z-20 mx-4 pb-1 @3xl:static @3xl:mx-0 @3xl:pb-0">
           <button
-            onClick={() => setCheckoutOpen(true)}
+            onClick={() => {
+              if (!s.address?.phone || s.address.phone.trim().length < 8) {
+                s.showToast('Mohon isi nomor telepon / WhatsApp penerima terlebih dahulu', 'error');
+                return;
+              }
+              setCheckoutOpen(true);
+            }}
             className="flex h-14 w-full items-center justify-between rounded-2xl bg-gold-400 px-5 font-extrabold text-navy-900 shadow-xl shadow-gold-500/30 hover:bg-gold-500 active:scale-[0.98] transition-transform"
           >
             <span>Pilih Pembayaran</span>
@@ -149,36 +226,8 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* Modal Pilih Alamat Pengiriman */}
-      <Sheet open={addrOpen} onClose={() => setAddrOpen(false)}>
-        <div className="p-5 text-slate-800">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-extrabold text-navy-900">Pilih Alamat Pengiriman</h3>
-            <button onClick={() => setAddrOpen(false)} className="rounded-full p-1.5 hover:bg-slate-100">
-              <X size={20} />
-            </button>
-          </div>
-          <div className="space-y-2">
-            {s.addresses.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => {
-                  s.setAddressId(a.id);
-                  setAddrOpen(false);
-                }}
-                className={`flex w-full gap-3 rounded-2xl border-2 p-3 text-left transition ${a.id === s.address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'}`}
-              >
-                <MapPin className={a.id === s.address?.id ? 'text-gold-600 shrink-0' : 'text-slate-400 shrink-0'} size={20} />
-                <div>
-                  <div className="text-sm font-bold text-navy-900">{a.label}</div>
-                  <div className="text-xs text-slate-600">{a.full}</div>
-                  {a.notes && <div className="mt-1 text-[11px] text-slate-400">Catatan: {a.notes}</div>}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </Sheet>
+      {/* Modal Pilih & Tambah Alamat + Google Maps */}
+      <AddressModal open={addrOpen} onClose={() => setAddrOpen(false)} />
     </div>
   );
 }

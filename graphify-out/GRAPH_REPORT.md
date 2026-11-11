@@ -1,17 +1,17 @@
 # Graph Report - Tugas_Bisnis  (2026-11-11)
 
 ## Corpus Check
-- 289 files · ~429,061 words
+- 290 files · ~431,457 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .bak 1, .css 1)
 
 ## Summary
-- 4676 nodes · 4805 edges · 257 communities (168 shown, 89 thin omitted)
+- 4679 nodes · 4823 edges · 257 communities (168 shown, 89 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `03a19f97`
+- Built from commit: `213f7be3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -274,12 +274,12 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `useUi()` - 32 edges
-2. `useStore()` - 29 edges
+2. `useStore()` - 31 edges
 3. `formatRp()` - 22 edges
 4. `Code Review and Quality` - 19 edges
-5. `lucide-react` - 16 edges
-6. `Browser Automation with playwright-cli` - 16 edges
-7. `react` - 15 edges
+5. `lucide-react` - 17 edges
+6. `react` - 16 edges
+7. `Browser Automation with playwright-cli` - 16 edges
 8. `AppShell()` - 15 edges
 9. `Components` - 15 edges
 10. `Git Workflow and Versioning` - 15 edges
@@ -303,7 +303,7 @@
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.07
-Nodes (88): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+80 more)
+Nodes (90): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+82 more)
 
 ### Community 1 - "4. Component Stylings"
 Cohesion: 0.04
@@ -982,7 +982,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Test generation (plan → generate → heal)` connect `3. Heal` to `playwright-cli/SKILL.md`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07016434892541087 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06926536731634184 - nodes in this community are weakly interconnected._
 - **Why does `Video Recording` connect `Video Recording` to `playwright-cli/SKILL.md`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `4. Component Stylings` be split into smaller, more focused modules?**

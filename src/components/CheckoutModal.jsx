@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Banknote, Building2, CheckCircle2, Copy, Loader2, QrCode, Smartphone, X, Zap } from 'lucide-react';
+import { ArrowLeft, Banknote, Building2, CheckCircle2, Copy, Loader2, MapPin, Phone, QrCode, Smartphone, User, X, Zap } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp } from '../data/vouchers';
@@ -15,7 +15,7 @@ const METHODS = [
 
 export default function CheckoutModal() {
   const { checkoutOpen, setCheckoutOpen, setTrackingId, go } = useUi();
-  const { total, placeOrder, cartCount, showToast } = useStore();
+  const { total, placeOrder, cartCount, showToast, address, updateActiveAddressField } = useStore();
   const [method, setMethod] = useState('QRIS');
   const [step, setStep] = useState('method'); // method | pay | processing | success
   const [order, setOrder] = useState(null);
@@ -44,6 +44,42 @@ export default function CheckoutModal() {
         {step === 'method' && (
           <>
             <Head title="Pilih Metode Pembayaran" onClose={close} />
+
+            {/* Ringkasan Penerima & Nomor Telepon */}
+            <div className="mb-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 text-xs">
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1 font-extrabold text-navy-900">
+                  <MapPin size={13} className="text-gold-600" /> Dikirim ke: {address?.label}
+                </span>
+                <span className="rounded bg-navy-900 px-1.5 py-0.5 text-[10px] font-bold text-gold-400">
+                  ⚡ 15 Menit
+                </span>
+              </div>
+              <div className="mb-2 line-clamp-1 text-[11px] text-slate-600">{address?.full}</div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-1.5 rounded-xl bg-white px-2.5 py-1.5 ring-1 ring-slate-200">
+                  <User size={13} className="shrink-0 text-slate-400" />
+                  <input
+                    type="text"
+                    value={address?.recipient || ''}
+                    onChange={(e) => updateActiveAddressField({ recipient: e.target.value })}
+                    placeholder="Nama Penerima"
+                    className="w-full bg-transparent text-xs font-bold text-navy-900 outline-none"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 rounded-xl bg-white px-2.5 py-1.5 ring-1 ring-slate-200">
+                  <Phone size={13} className="shrink-0 text-emerald-600" />
+                  <input
+                    type="tel"
+                    value={address?.phone || ''}
+                    onChange={(e) => updateActiveAddressField({ phone: e.target.value })}
+                    placeholder="No. Telepon / WA"
+                    className="w-full bg-transparent text-xs font-bold text-navy-900 outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-2">
               {METHODS.map(({ id, label, desc, icon: Icon, badge }) => (
                 <button

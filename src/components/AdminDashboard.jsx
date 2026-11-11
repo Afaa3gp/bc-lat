@@ -92,7 +92,7 @@ export default function AdminDashboard() {
                         <StatusBadge status={st} />
                       </div>
                       <div className="truncate text-[11px] text-slate-500">
-                        {o.items.length} jenis • {o.paymentMethod} • {o.address.label} • Kurir {o.courier.name}
+                        👤 {o.address?.recipient || 'Pelanggan'} ({o.address?.phone || '-'}) • 📍 {o.address?.label} • {o.paymentMethod} • Kurir {o.courier.name}
                       </div>
                     </div>
                     <div className="text-sm font-extrabold text-navy-900">{formatRp(o.total)}</div>

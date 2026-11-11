@@ -3,7 +3,7 @@ import { getProduct } from '../data/products';
 import { DELIVERY_FEE, evaluateVoucher, findVoucher } from '../data/vouchers';
 
 const StoreContext = createContext(null);
-const STORAGE_KEY = 'bclat-store-v2';
+const STORAGE_KEY = 'bclat-store-v3';
 
 /** Tahapan pesanan (dalam menit simulasi sejak order dibuat) */
 export const ORDER_STEPS = [
@@ -15,9 +15,9 @@ export const ORDER_STEPS = [
 export const ETA_MINUTES = 15;
 
 const COURIERS = [
-  { name: 'Budi Santoso', vehicle: 'Honda Beat Hitam', plate: 'B 4521 KLA' },
-  { name: 'Rina Kartika', vehicle: 'Yamaha Mio Biru', plate: 'B 3317 UXA' },
-  { name: 'Dimas Prasetyo', vehicle: 'Honda Vario Putih', plate: 'B 6802 ZEA' },
+  { name: 'Budi Santoso', vehicle: 'Honda Beat Hitam', plate: 'B 4521 KLA', phone: '0813-8821-4521' },
+  { name: 'Rina Kartika', vehicle: 'Yamaha Mio Biru', plate: 'B 3317 UXA', phone: '0812-9904-3317' },
+  { name: 'Dimas Prasetyo', vehicle: 'Honda Vario Putih', plate: 'B 6802 ZEA', phone: '0857-7120-6802' },
 ];
 
 export const DARK_STORE_HUB = {
@@ -27,6 +27,27 @@ export const DARK_STORE_HUB = {
   lng: 106.7352,
 };
 
+/** Hitung jarak garis jalan (estimasi km) dari Dark Store Hub */
+export function calcHubDistanceKm(lat, lng) {
+  const R = 6371;
+  const dLat = ((lat - DARK_STORE_HUB.lat) * Math.PI) / 180;
+  const dLng = ((lng - DARK_STORE_HUB.lng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((DARK_STORE_HUB.lat * Math.PI) / 180) *
+      Math.cos((lat * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const straight = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.max(0.2, Number((straight * 1.25).toFixed(1)));
+}
+
+const defaultProfile = {
+  name: 'Kelompok Bisnis BC-LAT',
+  phone: '0812-3456-7890',
+  email: 'demo@bc-lat.web.id',
+};
+
 const defaultAddresses = [
   {
     id: 'addr-1',
@@ -34,7 +55,7 @@ const defaultAddresses = [
     recipient: 'Kelompok BC-LAT',
     phone: '0812-3456-7890',
     full: 'Universitas Pamulang (UNPAM), Jl. Surya Kencana No. 1, Pamulang, Tangerang Selatan',
-    notes: 'Lobby Utama / Gedung Kampus',
+    notes: 'Lobby Utama / Gedung Kampus A',
     lat: -6.3461,
     lng: 106.7370,
     distanceKm: 0.9,
@@ -45,7 +66,7 @@ const defaultAddresses = [
     recipient: 'Kelompok BC-LAT',
     phone: '0812-3456-7890',
     full: 'Universitas Pamulang Kampus 2 (Viktor), Jl. Raya Puspiptek, Serpong, Tangerang Selatan',
-    notes: 'Hubungi saat sampai gerbang',
+    notes: 'Hubungi nomor WA saat sampai gerbang depan',
     lat: -6.3478,
     lng: 106.6915,
     distanceKm: 2.8,
@@ -56,7 +77,7 @@ const defaultAddresses = [
     recipient: 'Kelompok BC-LAT',
     phone: '0812-3456-7890',
     full: 'Jl. Pajajaran No. 12, Pamulang Barat, Tangerang Selatan',
-    notes: 'Dekat Kampus UNPAM',
+    notes: 'Pagar hitam samping warung, dekat UNPAM',
     lat: -6.3422,
     lng: 106.7335,
     distanceKm: 1.4,
@@ -67,6 +88,7 @@ const initialState = () => ({
   cart: {}, // { productId: qty }
   voucherCode: '',
   orders: [],
+  userProfile: defaultProfile,
   addresses: defaultAddresses,
   addressId: 'addr-1',
   stock: {}, // pengurangan stok: { productId: soldQty }
@@ -78,7 +100,15 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return { ...initialState(), ...parsed, addresses: defaultAddresses };
+      const addresses = Array.isArray(parsed.addresses) && parsed.addresses.length > 0 ? parsed.addresses : defaultAddresses;
+      const addressId = addresses.some((a) => a.id === parsed.addressId) ? parsed.addressId : addresses[0].id;
+      return {
+        ...initialState(),
+        ...parsed,
+        userProfile: { ...defaultProfile, ...(parsed.userProfile || {}) },
+        addresses,
+        addressId,
+      };
     }
   } catch {
     /* abaikan data rusak */
@@ -182,9 +212,86 @@ export function StoreProvider({ children }) {
 
   const removeVoucher = useCallback(() => setState((s) => ({ ...s, voucherCode: '' })), []);
 
+  const updateProfile = useCallback(
+    (patch) => {
+      setState((s) => ({
+        ...s,
+        userProfile: { ...s.userProfile, ...patch },
+      }));
+      showToast('Profil & nomor telepon disimpan', 'success');
+    },
+    [showToast]
+  );
+
+  const saveAddress = useCallback(
+    (addrInput) => {
+      const lat = Number(addrInput.lat) || -6.3461;
+      const lng = Number(addrInput.lng) || 106.7370;
+      const distanceKm = addrInput.distanceKm || calcHubDistanceKm(lat, lng);
+      const clean = {
+        id: addrInput.id || `addr-${Date.now()}`,
+        label: (addrInput.label || 'Lokasi Saya').trim(),
+        recipient: (addrInput.recipient || state.userProfile.name || 'Pelanggan BC-LAT').trim(),
+        phone: (addrInput.phone || state.userProfile.phone || '0812-3456-7890').trim(),
+        full: (addrInput.full || '').trim(),
+        notes: (addrInput.notes || '').trim(),
+        lat,
+        lng,
+        distanceKm,
+      };
+      setState((s) => {
+        const exists = s.addresses.some((a) => a.id === clean.id);
+        const addresses = exists
+          ? s.addresses.map((a) => (a.id === clean.id ? clean : a))
+          : [clean, ...s.addresses];
+        return {
+          ...s,
+          addresses,
+          addressId: clean.id,
+          userProfile: {
+            ...s.userProfile,
+            name: clean.recipient || s.userProfile.name,
+            phone: clean.phone || s.userProfile.phone,
+          },
+        };
+      });
+      showToast(`Lokasi "${clean.label}" berhasil disimpan`, 'success');
+      return clean;
+    },
+    [state.userProfile, showToast]
+  );
+
+  const updateActiveAddressField = useCallback((patch) => {
+    setState((s) => {
+      const addresses = s.addresses.map((a) => (a.id === s.addressId ? { ...a, ...patch } : a));
+      return {
+        ...s,
+        addresses,
+        userProfile: {
+          ...s.userProfile,
+          ...(patch.recipient ? { name: patch.recipient } : {}),
+          ...(patch.phone ? { phone: patch.phone } : {}),
+        },
+      };
+    });
+  }, []);
+
+  const deleteAddress = useCallback(
+    (id) => {
+      setState((s) => {
+        if (s.addresses.length <= 1) return s;
+        const addresses = s.addresses.filter((a) => a.id !== id);
+        const addressId = s.addressId === id ? addresses[0].id : s.addressId;
+        return { ...s, addresses, addressId };
+      });
+      showToast('Alamat dihapus', 'default');
+    },
+    [showToast]
+  );
+
   const placeOrder = useCallback(
     (paymentMethod) => {
-      const address = state.addresses.find((a) => a.id === state.addressId);
+      const address = state.addresses.find((a) => a.id === state.addressId) || state.addresses[0];
       const d = new Date();
       const seq = String(state.orders.length + 1).padStart(3, '0');
       const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
@@ -201,7 +308,11 @@ export function StoreProvider({ children }) {
         total,
         voucherCode: voucher && !voucherResult.error ? voucher.code : null,
         paymentMethod,
-        address,
+        address: {
+          ...address,
+          recipient: address.recipient || state.userProfile.name,
+          phone: address.phone || state.userProfile.phone,
+        },
         courier: COURIERS[state.orders.length % COURIERS.length],
         cancelled: false,
       };
@@ -212,7 +323,7 @@ export function StoreProvider({ children }) {
       });
       return order;
     },
-    [state.addresses, state.addressId, state.orders.length, state.demoSpeed, cartItems, subtotal, voucherResult, deliveryFee, total, voucher]
+    [state.addresses, state.addressId, state.userProfile, state.orders.length, state.demoSpeed, cartItems, subtotal, voucherResult, deliveryFee, total, voucher]
   );
 
   /** Admin/presenter: majukan status pesanan ke tahap berikutnya */
@@ -265,12 +376,16 @@ export function StoreProvider({ children }) {
     voucherResult,
     deliveryFee,
     total,
-    address: state.addresses.find((a) => a.id === state.addressId),
+    address: state.addresses.find((a) => a.id === state.addressId) || state.addresses[0],
     stockLeft,
     setQty,
     addToCart,
     applyVoucher,
     removeVoucher,
+    updateProfile,
+    saveAddress,
+    updateActiveAddressField,
+    deleteAddress,
     placeOrder,
     advanceOrder,
     cancelOrder,

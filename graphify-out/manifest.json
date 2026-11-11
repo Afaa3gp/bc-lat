@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   "src/components/AdminDashboard.jsx": {
-    "mtime": 1794360252.4830172,
-    "seen": 1794360435.2548645,
-    "ast_hash": "2acd568ebfdc064ae09404387302af53",
+    "mtime": 1794402051.1467276,
+    "seen": 1794402099.7342231,
+    "ast_hash": "1beaf31a941707bf7c16ab74b031c92a",
     "semantic_hash": ""
   },
   "src/components/BannerSlider.jsx": {
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "src/components/CartPage.jsx": {
-    "mtime": 1794353365.0498414,
-    "seen": 1794353470.4218998,
-    "ast_hash": "ab4b52c823d4d831e1e6502003ffbc6d",
+    "mtime": 1794401834.8041217,
+    "seen": 1794402099.7344155,
+    "ast_hash": "7225db7f85c035fc4a7d609b5243a17a",
     "semantic_hash": ""
   },
   "src/components/CategoryGrid.jsx": {
@@ -78,15 +78,15 @@
     "semantic_hash": ""
   },
   "src/components/CheckoutModal.jsx": {
-    "mtime": 1794353329.2861104,
-    "seen": 1794353470.4220695,
-    "ast_hash": "2159943a1ae78df4e9eb70a883f1c125",
+    "mtime": 1794401871.3801403,
+    "seen": 1794402099.7345142,
+    "ast_hash": "92a6a768ed77c36e98dda1920addf37d",
     "semantic_hash": ""
   },
   "src/components/Header.jsx": {
-    "mtime": 1794400867.3057551,
-    "seen": 1794401230.5308597,
-    "ast_hash": "a0a07f51ba277b7d08076b72145dd01c",
+    "mtime": 1794401789.7665555,
+    "seen": 1794402099.7345161,
+    "ast_hash": "693ee97d5b5d03035eb5f9ed7f2b3e01",
     "semantic_hash": ""
   },
   "src/components/HomePage.jsx": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/components/OrdersPage.jsx": {
-    "mtime": 1794400986.6898804,
-    "seen": 1794401230.5309818,
-    "ast_hash": "6165827331d3a531764334c5f19c965c",
+    "mtime": 1794401937.810681,
+    "seen": 1794402099.734611,
+    "ast_hash": "562f557644bc29af2e38c79e0bc3905d",
     "semantic_hash": ""
   },
   "src/components/ProductCard.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/components/ProfilePage.jsx": {
-    "mtime": 1794401084.5041907,
-    "seen": 1794401230.531254,
-    "ast_hash": "50a5fdc0d986b53e546e669922003e3c",
+    "mtime": 1794402000.382988,
+    "seen": 1794402099.7347972,
+    "ast_hash": "dba8db6c1369a0f75d1381a66b4a4a0a",
     "semantic_hash": ""
   },
   "src/components/ui.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "src/context/StoreContext.jsx": {
-    "mtime": 1794400800.3563998,
-    "seen": 1794401230.5315592,
-    "ast_hash": "5754849340aa6cab0233a4fa04353bd2",
+    "mtime": 1794401666.787861,
+    "seen": 1794402099.7348938,
+    "ast_hash": "2dd9d6b28114ab7ea254b862181926cf",
     "semantic_hash": ""
   },
   "src/context/UiContext.jsx": {
@@ -1833,6 +1833,12 @@
     "mtime": 1794397545.6450036,
     "seen": 1794401230.5279832,
     "ast_hash": "4433a3bcad8856d73068140306411c4c",
+    "semantic_hash": ""
+  },
+  "src/components/AddressModal.jsx": {
+    "mtime": 1794401746.5630262,
+    "seen": 1794402099.7342198,
+    "ast_hash": "51dc9a05ea323bad15f77f40041a8a32",
     "semantic_hash": ""
   },
   "package-lock.json": {
