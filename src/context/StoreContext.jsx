@@ -20,10 +20,47 @@ const COURIERS = [
   { name: 'Dimas Prasetyo', vehicle: 'Honda Vario Putih', plate: 'B 6802 ZEA' },
 ];
 
+export const DARK_STORE_HUB = {
+  name: 'Dark Store BC-LAT Hub Pamulang',
+  address: 'Jl. Surya Kencana No. 18, Pamulang Barat, Tangerang Selatan',
+  lat: -6.3485,
+  lng: 106.7352,
+};
+
 const defaultAddresses = [
-  { id: 'addr-1', label: 'Kampus UNPAM', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Universitas Pamulang (UNPAM), Jl. Surya Kencana No. 1, Pamulang, Tangerang Selatan', notes: 'Lobby Utama / Gedung Kampus' },
-  { id: 'addr-2', label: 'UNPAM Viktor', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Universitas Pamulang Kampus 2 (Viktor), Jl. Raya Puspiptek, Serpong, Tangerang Selatan', notes: 'Hubungi saat sampai gerbang' },
-  { id: 'addr-3', label: 'Kost Pamulang', recipient: 'Kelompok BC-LAT', phone: '0812-3456-7890', full: 'Jl. Pajajaran No. 12, Pamulang Barat, Tangerang Selatan', notes: 'Dekat Kampus UNPAM' },
+  {
+    id: 'addr-1',
+    label: 'Kampus UNPAM',
+    recipient: 'Kelompok BC-LAT',
+    phone: '0812-3456-7890',
+    full: 'Universitas Pamulang (UNPAM), Jl. Surya Kencana No. 1, Pamulang, Tangerang Selatan',
+    notes: 'Lobby Utama / Gedung Kampus',
+    lat: -6.3461,
+    lng: 106.7370,
+    distanceKm: 0.9,
+  },
+  {
+    id: 'addr-2',
+    label: 'UNPAM Viktor',
+    recipient: 'Kelompok BC-LAT',
+    phone: '0812-3456-7890',
+    full: 'Universitas Pamulang Kampus 2 (Viktor), Jl. Raya Puspiptek, Serpong, Tangerang Selatan',
+    notes: 'Hubungi saat sampai gerbang',
+    lat: -6.3478,
+    lng: 106.6915,
+    distanceKm: 2.8,
+  },
+  {
+    id: 'addr-3',
+    label: 'Kost Pamulang',
+    recipient: 'Kelompok BC-LAT',
+    phone: '0812-3456-7890',
+    full: 'Jl. Pajajaran No. 12, Pamulang Barat, Tangerang Selatan',
+    notes: 'Dekat Kampus UNPAM',
+    lat: -6.3422,
+    lng: 106.7335,
+    distanceKm: 1.4,
+  },
 ];
 
 const initialState = () => ({
@@ -39,7 +76,10 @@ const initialState = () => ({
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...initialState(), ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...initialState(), ...parsed, addresses: defaultAddresses };
+    }
   } catch {
     /* abaikan data rusak */
   }

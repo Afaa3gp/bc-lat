@@ -20,10 +20,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 text-white shadow-lg shadow-navy-900/20">
-      <div className="mx-auto max-w-6xl px-4 pt-3 pb-4 @3xl:px-6 @3xl:py-4">
+    <header className="relative z-30 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 text-white shadow-lg shadow-navy-900/20 @3xl:sticky @3xl:top-0">
+      <div className="mx-auto max-w-6xl px-4 pt-3 pb-3.5 @3xl:px-6 @3xl:py-4">
         {/* Baris atas */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2">
           <button onClick={() => go('home')} className="shrink-0" aria-label="Beranda BC-LAT">
             <Logo size="md" tagline />
           </button>
@@ -31,12 +31,12 @@ export default function Header() {
           {/* Search versi desktop */}
           <SearchBox query={query} setQuery={setQuery} setCategory={setCategory} go={go} className="hidden flex-1 @3xl:flex" />
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => setChatOpen(true)}
-              className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-xs font-bold ring-1 ring-white/15 hover:bg-white/20"
+              className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-xs font-bold whitespace-nowrap ring-1 ring-white/15 hover:bg-white/20 active:scale-95 transition"
             >
-              <Headphones size={16} className="text-gold-400" />
+              <Headphones size={15} className="shrink-0 text-gold-400" />
               <span>Chat CS</span>
             </button>
             {/* Navigasi desktop */}
@@ -66,40 +66,65 @@ export default function Header() {
         </div>
 
         {/* Janji pengiriman + alamat */}
-        <div className="mt-3 flex items-center justify-between gap-3 @3xl:mt-3">
-          <div>
+        <div className="mt-2.5 flex items-center justify-between gap-2.5 @3xl:mt-3">
+          <div className="shrink-0">
             <div className="text-[11px] font-medium text-slate-300">Tiba dalam</div>
-            <div className="flex items-center gap-1 text-2xl leading-tight font-extrabold @3xl:text-xl">
-              <Zap size={20} className="fill-gold-400 text-gold-400" /> 15 Menit
+            <div className="flex items-center gap-1 text-xl leading-tight font-extrabold sm:text-2xl @3xl:text-xl">
+              <Zap size={19} className="fill-gold-400 text-gold-400" /> 15 Menit
             </div>
-            <div className="text-[11px] font-semibold text-slate-200">Buka 24 jam & tersedia &gt;10.000 produk</div>
+            <div className="text-[10px] font-semibold text-slate-200 sm:text-[11px]">Buka 24 jam • &gt;10.000 produk</div>
           </div>
           <button
             onClick={() => setAddrOpen(true)}
-            className="flex max-w-[52%] items-center gap-2 rounded-2xl bg-white/10 px-3 py-2 text-left ring-1 ring-white/15 hover:bg-white/15 @3xl:max-w-sm"
+            className="flex max-w-[56%] min-w-0 items-center gap-2 rounded-2xl bg-white/10 px-3 py-2 text-left ring-1 ring-white/15 hover:bg-white/15 active:scale-[0.99] transition @3xl:max-w-sm"
           >
-            <MapPin size={18} className="shrink-0 text-gold-400" />
-            <div className="min-w-0">
-              <div className="text-[10px] font-medium text-slate-300">Antar ke {address?.label}</div>
+            <MapPin size={17} className="shrink-0 text-gold-400" />
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[10px] font-medium text-slate-300">Antar ke {address?.label}</div>
               <div className="truncate text-xs font-bold">{address?.full}</div>
             </div>
-            <ChevronDown size={16} className="shrink-0 text-slate-300" />
+            <ChevronDown size={15} className="shrink-0 text-slate-300" />
           </button>
         </div>
 
         {/* Search versi mobile */}
-        <SearchBox query={query} setQuery={setQuery} setCategory={setCategory} go={go} className="mt-3 flex @3xl:hidden" />
+        <SearchBox query={query} setQuery={setQuery} setCategory={setCategory} go={go} className="mt-2.5 flex @3xl:hidden" />
       </div>
 
-      {/* Pilih alamat */}
+      {/* Pilih alamat + Peta Interaktif UNPAM */}
       <Sheet open={addrOpen} onClose={() => setAddrOpen(false)}>
         <div className="p-5 text-slate-800">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-extrabold text-navy-900">Mau diantar ke mana?</h3>
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-extrabold text-navy-900">Pilih Lokasi Pengiriman</h3>
+              <p className="text-xs text-slate-500">Area layanan Dark Store Hub Pamulang (UNPAM)</p>
+            </div>
             <button onClick={() => setAddrOpen(false)} className="rounded-full p-1 hover:bg-slate-100">
               <X size={20} />
             </button>
           </div>
+
+          {/* Live Map Preview */}
+          <div className="mb-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+            <iframe
+              title="Peta Lokasi Pengiriman UNPAM"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${(address?.lng || 106.737) - 0.006}%2C${(address?.lat || -6.3461) - 0.004}%2C${(address?.lng || 106.737) + 0.006}%2C${(address?.lat || -6.3461) + 0.004}&layer=mapnik&marker=${address?.lat || -6.3461}%2C${address?.lng || 106.737}`}
+              className="h-40 w-full border-0"
+              loading="lazy"
+            />
+            <div className="flex items-center justify-between bg-navy-900 px-3 py-1.5 text-[11px] text-white">
+              <span className="truncate font-semibold">📍 {address?.label} ({address?.distanceKm || 0.9} km dari Hub)</span>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${address?.lat || -6.3461},${address?.lng || 106.737}`}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0 font-bold text-gold-400 underline"
+              >
+                Buka Google Maps ↗
+              </a>
+            </div>
+          </div>
+
           <div className="space-y-2">
             {addresses.map((a) => (
               <button
@@ -108,19 +133,26 @@ export default function Header() {
                   setAddressId(a.id);
                   setAddrOpen(false);
                 }}
-                className={`flex w-full gap-3 rounded-2xl border-2 p-3 text-left ${a.id === address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'}`}
+                className={`flex w-full gap-3 rounded-2xl border-2 p-3 text-left transition ${a.id === address?.id ? 'border-gold-500 bg-gold-300/15' : 'border-slate-200 hover:border-slate-300'}`}
               >
-                <MapPin className={a.id === address?.id ? 'text-gold-600' : 'text-slate-400'} size={20} />
-                <div>
-                  <div className="text-sm font-bold text-navy-900">{a.label}</div>
+                <MapPin className={a.id === address?.id ? 'mt-0.5 shrink-0 text-gold-600' : 'mt-0.5 shrink-0 text-slate-400'} size={20} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-navy-900">{a.label}</span>
+                    {a.distanceKm && (
+                      <span className="rounded-full bg-navy-900/10 px-2 py-0.5 text-[10px] font-bold text-navy-800">
+                        {a.distanceKm} km • ~{Math.max(5, Math.round(a.distanceKm * 5))} mnt
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-slate-600">{a.full}</div>
                   {a.notes && <div className="mt-1 text-[11px] text-slate-400">Catatan: {a.notes}</div>}
                 </div>
               </button>
             ))}
           </div>
-          <p className="mt-4 rounded-xl bg-navy-900/5 p-3 text-xs text-slate-600">
-            ⚡ Semua alamat berada dalam radius 3 km dari <b>Dark Store BC-LAT Pamulang (UNPAM)</b> — pengantaran 15 menit dijamin.
+          <p className="mt-3 rounded-xl bg-navy-900/5 p-3 text-xs text-slate-600">
+            ⚡ Semua titik berada dalam jangkauan <b>Dark Store BC-LAT Pamulang (Jl. Surya Kencana)</b> — pengantaran 15 menit dijamin.
           </p>
         </div>
       </Sheet>

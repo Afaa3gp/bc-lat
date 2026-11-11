@@ -170,6 +170,10 @@ function Footer() {
         <div className="col-span-2">
           <Logo size="md" tagline />
           <p className="mt-4 max-w-sm">Market online untuk keperluan sehari-hari. Belanja kebutuhan dapur, snack, dan rumah tangga — tiba dalam 15 menit, buka 24 jam.</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold text-emerald-400">
+            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 ring-1 ring-emerald-400/20">✓ NIB OSS RBA: 1111260048291</span>
+            <span className="rounded-full bg-gold-400/10 px-2.5 py-1 text-gold-300 ring-1 ring-gold-400/20">KBLI 47911 &amp; 47111</span>
+          </div>
         </div>
         <div>
           <div className="mb-3 font-bold text-white">Layanan</div>

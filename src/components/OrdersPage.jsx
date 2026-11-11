@@ -1,5 +1,6 @@
-import { ArrowLeft, Bike, Check, ChevronRight, MapPin, MessageCircle, Phone, Receipt, RotateCcw, Store, Zap } from 'lucide-react';
-import { ETA_MINUTES, ORDER_STEPS, elapsedMinutes, orderStatus, useStore } from '../context/StoreContext';
+import { useState } from 'react';
+import { ArrowLeft, Bike, Check, ChevronRight, Compass, ExternalLink, Map, MapPin, MessageCircle, Navigation, Phone, Receipt, RotateCcw, Store, Zap } from 'lucide-react';
+import { DARK_STORE_HUB, ETA_MINUTES, ORDER_STEPS, elapsedMinutes, orderStatus, useStore } from '../context/StoreContext';
 import { useUi } from '../context/UiContext';
 import { formatRp } from '../data/vouchers';
 import { SmartImage } from './ui';
@@ -116,17 +117,28 @@ function pointAt(t) {
 function TrackingView({ order, onBack }) {
   const { now, cancelOrder, reorder, showToast } = useStore();
   const { go } = useUi();
+  const [mapMode, setMapMode] = useState('radar'); // radar | osm
   const st = orderStatus(order, now);
   const m = elapsedMinutes(order, now);
   const deliverStart = ORDER_STEPS[2].at;
   const deliverEnd = ORDER_STEPS[3].at;
-  const progress = (m - deliverStart) / (deliverEnd - deliverStart);
-  const [cx, cy] = pointAt(progress);
+  const rawProgress = (m - deliverStart) / (deliverEnd - deliverStart);
+  const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
+  const [cx, cy] = pointAt(clampedProgress);
   const delivered = st.key === 'delivered';
   const remain = Math.max(0, deliverEnd - m) * 60;
   const mm = String(Math.floor(remain / 60)).padStart(2, '0');
   const ss = String(Math.floor(remain % 60)).padStart(2, '0');
   const routeStr = ROUTE.map((p) => p.join(',')).join(' ');
+
+  const destLat = order.address?.lat || -6.3461;
+  const destLng = order.address?.lng || 106.7370;
+  const totalKm = order.address?.distanceKm || 0.9;
+  const remainKm = delivered ? 0 : Math.max(0.05, totalKm * (1 - clampedProgress)).toFixed(2);
+  const speedKmh = delivered || order.cancelled || st.index < 2 ? 0 : 34 + Math.round(Math.sin(now / 1000) * 4);
+  const curLat = (DARK_STORE_HUB.lat + (destLat - DARK_STORE_HUB.lat) * clampedProgress).toFixed(4);
+  const curLng = (DARK_STORE_HUB.lng + (destLng - DARK_STORE_HUB.lng) * clampedProgress).toFixed(4);
+  const gmapsRouteUrl = `https://www.google.com/maps/dir/?api=1&origin=${DARK_STORE_HUB.lat},${DARK_STORE_HUB.lng}&destination=${destLat},${destLng}&travelmode=two-wheeler`;
 
   return (
     <div className="py-4 @3xl:py-6">
@@ -159,37 +171,128 @@ function TrackingView({ order, onBack }) {
             </div>
           </div>
 
-          {/* Peta simulasi */}
-          <div className="relative mx-4 overflow-hidden rounded-2xl bg-[#E8EEF5] ring-1 ring-slate-200 @3xl:mx-0">
-            <svg viewBox="0 0 340 240" className="w-full">
-              {/* blok bangunan */}
-              {[[60, 160, 50, 30], [140, 100, 60, 25], [240, 60, 50, 50], [10, 20, 90, 100], [150, 160, 170, 60], [240, 130, 80, 20]].map(([x, y, w, h], i) => (
-                <rect key={i} x={x} y={y} width={w} height={h} rx={6} fill="#D5DEE9" />
-              ))}
-              <rect x="0" y="0" width="340" height="240" fill="url(#grid)" opacity="0.5" />
-              <defs>
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M20 0H0V20" fill="none" stroke="#CBD5E1" strokeWidth="0.5" />
-                </pattern>
-              </defs>
-              <polyline points={routeStr} fill="none" stroke="#fff" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-              <polyline points={routeStr} fill="none" stroke="#2B4C8C" strokeWidth="4" strokeDasharray="2 6" strokeLinecap="round" strokeLinejoin="round" />
-              {/* Dark store */}
-              <circle cx="40" cy="200" r="14" fill="#0B132B" />
-              <text x="40" y="205" textAnchor="middle" fontSize="13">🏪</text>
-              {/* Tujuan */}
-              <circle cx="300" cy="40" r="14" fill="#F59E0B" />
-              <text x="300" y="45" textAnchor="middle" fontSize="13">🏠</text>
-              {/* Kurir */}
-              {!order.cancelled && (
-                <g style={{ transition: 'transform 1s linear' }} transform={`translate(${cx} ${cy})`}>
-                  <circle r="13" fill="#fff" stroke="#F59E0B" strokeWidth="3" />
-                  <text y="5" textAnchor="middle" fontSize="14" className="animate-ride">🛵</text>
-                </g>
-              )}
-            </svg>
-            <div className="absolute bottom-2 left-2 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900">Dark Store BC-LAT Pamulang</div>
-            <div className="absolute top-2 right-2 max-w-[45%] truncate rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900">{order.address.label}</div>
+          {/* Peta Pelacakan Real-Time Pamulang / UNPAM */}
+          <div className="mx-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 @3xl:mx-0">
+            {/* Toolbar Peta */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2">
+              <div className="flex rounded-xl bg-slate-200/80 p-0.5 text-xs font-bold">
+                <button
+                  onClick={() => setMapMode('radar')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'radar' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
+                >
+                  <Navigation size={12} /> Radar Kurir
+                </button>
+                <button
+                  onClick={() => setMapMode('osm')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${mapMode === 'osm' ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-slate-600 hover:text-navy-900'}`}
+                >
+                  <Map size={12} /> Peta Jalan (OSM)
+                </button>
+              </div>
+              <a
+                href={gmapsRouteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100"
+              >
+                <span>Google Maps</span>
+                <ExternalLink size={11} />
+              </a>
+            </div>
+
+            {mapMode === 'radar' ? (
+              <div className="relative bg-[#E6EEF6]">
+                <svg viewBox="0 0 340 240" className="block w-full">
+                  <defs>
+                    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                      <path d="M24 0H0V24" fill="none" stroke="#CBD5E1" strokeWidth="0.5" />
+                    </pattern>
+                  </defs>
+                  <rect x="0" y="0" width="340" height="240" fill="url(#grid)" opacity="0.65" />
+
+                  {/* Taman / Area Hijau Alun-Alun & Kampus UNPAM */}
+                  <rect x="195" y="16" width="132" height="62" rx="10" fill="#D1FAE5" />
+                  <rect x="12" y="18" width="84" height="75" rx="10" fill="#DCFCE7" />
+
+                  {/* Blok Bangunan Pamulang */}
+                  {[
+                    [62, 162, 52, 34],
+                    [136, 98, 62, 28],
+                    [232, 24, 46, 36],
+                    [20, 32, 68, 50],
+                    [150, 158, 168, 56],
+                    [242, 122, 78, 24],
+                  ].map(([x, y, w, h], i) => (
+                    <rect key={i} x={x} y={y} width={w} height={h} rx={5} fill="#CFD9E5" stroke="#B8C7D9" strokeWidth="1" />
+                  ))}
+
+                  {/* Jaringan Jalan Sekitar Pamulang */}
+                  <path d="M0 140 H340 M120 0 V240 M220 0 V240 M0 80 H340" stroke="#F8FAFC" strokeWidth="12" />
+                  <circle cx="120" cy="140" r="14" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2" />
+
+                  {/* Label Nama Jalan Asli Pamulang */}
+                  <text x="172" y="136" fontSize="6.5" fontWeight="700" fill="#64748B">JL. SURYA KENCANA</text>
+                  <text x="48" y="76" fontSize="6.5" fontWeight="700" fill="#64748B">JL. PAJAJARAN</text>
+                  <text x="124" y="152" fontSize="6" fontWeight="700" fill="#475569">Bundaran Pamulang</text>
+                  <text x="205" y="28" fontSize="6.5" fontWeight="800" fill="#065F46">KAWASAN KAMPUS UNPAM</text>
+
+                  {/* Jalur Rute Pengantaran */}
+                  <polyline points={routeStr} fill="none" stroke="#FFFFFF" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points={routeStr} fill="none" stroke="#F59E0B" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.35" />
+                  <polyline points={routeStr} fill="none" stroke="#0B132B" strokeWidth="3.5" strokeDasharray="3 6" strokeLinecap="round" strokeLinejoin="round" />
+
+                  {/* Titik Dark Store Hub Pamulang */}
+                  <circle cx="40" cy="200" r="20" fill="#0B132B" opacity="0.12" />
+                  <circle cx="40" cy="200" r="13" fill="#0B132B" stroke="#fff" strokeWidth="2" />
+                  <text x="40" y="204" textAnchor="middle" fontSize="12">🏪</text>
+
+                  {/* Titik Tujuan (UNPAM / Pelanggan) */}
+                  <circle cx="300" cy="40" r="20" fill="#F59E0B" opacity="0.2" />
+                  <circle cx="300" cy="40" r="13" fill="#F59E0B" stroke="#fff" strokeWidth="2" />
+                  <text x="300" y="44" textAnchor="middle" fontSize="12">🎓</text>
+
+                  {/* Posisi Kurir Live */}
+                  {!order.cancelled && (
+                    <g style={{ transition: 'transform 1s linear' }} transform={`translate(${cx} ${cy})`}>
+                      <circle r="18" fill="#F59E0B" opacity="0.25" />
+                      <circle r="13" fill="#fff" stroke="#0B132B" strokeWidth="3" />
+                      <text y="5" textAnchor="middle" fontSize="13" className="animate-ride">🛵</text>
+                    </g>
+                  )}
+                </svg>
+                <div className="absolute bottom-2 left-2 rounded-lg bg-navy-900/90 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                  🏪 Hub Jl. Surya Kencana
+                </div>
+                <div className="absolute top-2 right-2 max-w-[52%] truncate rounded-lg bg-white/95 px-2.5 py-1 text-[10px] font-extrabold text-navy-900 shadow ring-1 ring-slate-200">
+                  📍 {order.address.label}
+                </div>
+              </div>
+            ) : (
+              <div className="relative h-60 w-full bg-slate-100">
+                <iframe
+                  title="Peta OpenStreetMap UNPAM"
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${destLng - 0.008}%2C${destLat - 0.005}%2C${destLng + 0.008}%2C${destLat + 0.005}&layer=mapnik&marker=${destLat}%2C${destLng}`}
+                  className="h-full w-full border-0"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            {/* Bar Telemetri GPS Kurir */}
+            <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 bg-white px-2 py-2 text-center text-[11px]">
+              <div>
+                <div className="text-[10px] text-slate-400">Jarak Sisa</div>
+                <div className="font-extrabold text-navy-900">{remainKm} km</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400">Kecepatan Kurir</div>
+                <div className="font-extrabold text-emerald-600">{speedKmh} km/jam</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400">GPS Live</div>
+                <div className="truncate font-mono text-[10px] font-bold text-slate-700">{curLat}, {curLng}</div>
+              </div>
+            </div>
           </div>
 
           {/* Kurir */}

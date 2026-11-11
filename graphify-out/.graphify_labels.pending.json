@@ -158,7 +158,7 @@
   "156": "Naming and Structure",
   "157": "Attaching Screenshots and Videos to Pull Requests",
   "158": "Advanced Mocking with run-code",
-  "159": "2. Generate",
+  "159": "Attaching to a Running Browser",
   "160": "ponytail-audit/SKILL.md",
   "161": "Ponytail Gain",
   "162": "ponytail-review/SKILL.md",
@@ -254,5 +254,6 @@
   "252": "idea-refine.sh script",
   "253": "idea-refine.ps1",
   "254": "chat.js",
-  "255": "vercel.json"
+  "255": "vercel.json",
+  "256": "deploy-vps.py"
 }

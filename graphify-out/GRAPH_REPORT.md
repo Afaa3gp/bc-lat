@@ -1,17 +1,17 @@
 # Graph Report - Tugas_Bisnis  (2026-11-11)
 
 ## Corpus Check
-- 288 files · ~427,784 words
+- 289 files · ~429,061 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .bak 1, .css 1)
 
 ## Summary
-- 4670 nodes · 4795 edges · 256 communities (168 shown, 88 thin omitted)
+- 4676 nodes · 4805 edges · 257 communities (168 shown, 89 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a929396b`
+- Built from commit: `03a19f97`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -175,7 +175,7 @@
 - Naming and Structure
 - Attaching Screenshots and Videos to Pull Requests
 - Advanced Mocking with run-code
-- 2. Generate
+- Attaching to a Running Browser
 - ponytail-audit/SKILL.md
 - Ponytail Gain
 - ponytail-review/SKILL.md
@@ -270,6 +270,7 @@
 - zapier/README.md
 - idea-refine.sh script
 - vercel.json
+- deploy-vps.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `useUi()` - 32 edges
@@ -278,10 +279,10 @@
 4. `Code Review and Quality` - 19 edges
 5. `lucide-react` - 16 edges
 6. `Browser Automation with playwright-cli` - 16 edges
-7. `AppShell()` - 15 edges
-8. `Components` - 15 edges
-9. `Git Workflow and Versioning` - 15 edges
-10. `Test-Driven Development` - 15 edges
+7. `react` - 15 edges
+8. `AppShell()` - 15 edges
+9. `Components` - 15 edges
+10. `Git Workflow and Versioning` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `AppShell()` --indirect_call--> `AdminDashboard()`  [INFERRED]
@@ -298,11 +299,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (256 total, 88 thin omitted)
+## Communities (257 total, 89 thin omitted)
 
 ### Community 0 - "App.jsx"
 Cohesion: 0.07
-Nodes (87): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+79 more)
+Nodes (88): dependencies, lucide-react@^0.460.0, react@^19.0.0, react-dom@^19.0.0, lucide-react, react, react-dom, lines (+80 more)
 
 ### Community 1 - "4. Component Stylings"
 Cohesion: 0.04
@@ -725,8 +726,8 @@ Cohesion: 0.06
 Nodes (35): Advanced: Multiple Cookies or Custom Options, Advanced: Multiple Operations, Authentication State Reuse, Clear All Cookies, Clear All localStorage, Clear sessionStorage, Common Patterns, Cookies (+27 more)
 
 ### Community 106 - "Browser Session Management"
-Cohesion: 0.10
-Nodes (20): 1. Name Browser Sessions Semantically, 2. Always Clean Up, 3. Delete Stale Browser Data, A/B Testing Sessions, Attach by channel name, Attach via browser extension, Attach via CDP endpoint, Attaching to a Running Browser (+12 more)
+Cohesion: 0.13
+Nodes (15): 1. Name Browser Sessions Semantically, 2. Always Clean Up, 3. Delete Stale Browser Data, A/B Testing Sessions, Best Practices, Browser Session Commands, Browser Session Configuration, Browser Session Isolation Properties (+7 more)
 
 ### Community 107 - "Interview Me"
 Cohesion: 0.11
@@ -749,8 +750,8 @@ Cohesion: 0.11
 Nodes (17): Anti-patterns to Avoid, Common Rationalizations, Detailed Instructions, How It Works, Idea Refine, Output, Overview, Phase 1: Understand & Expand (Divergent) (+9 more)
 
 ### Community 112 - "3. Heal"
-Cohesion: 0.11
-Nodes (18): 0. How generation works, 1.1 Prerequisite: workspace, 1.2 Prerequisite: seed test, 1.3 Explore the app, 1.4 Write the spec file, 1. Planning, 3.1 Find failing tests, 3.2 Debug one failure (+10 more)
+Cohesion: 0.09
+Nodes (23): 0. How generation works, 1.1 Prerequisite: workspace, 1.2 Prerequisite: seed test, 1.3 Explore the app, 1.4 Write the spec file, 1. Planning, 2.1 Inputs, 2.2 Generate one scenario (+15 more)
 
 ### Community 113 - "Tracing"
 Cohesion: 0.12
@@ -769,8 +770,8 @@ Cohesion: 0.12
 Nodes (15): 1. Define "working" before instrumenting, 2. Pick the right signal for each question, 3. Structured logging, 4. Metrics, 5. Distributed tracing, 6. Alerting, 7. Verify the telemetry itself, Common Rationalizations (+7 more)
 
 ### Community 117 - "playwright-cli/SKILL.md"
-Cohesion: 0.16
-Nodes (7): Examples, Inspecting Element Attributes, Debugging Playwright Tests, Running Playwright Tests, CLI Route Commands, Request Mocking, URL Patterns
+Cohesion: 0.21
+Nodes (4): Examples, Inspecting Element Attributes, Debugging Playwright Tests, Running Playwright Tests
 
 ### Community 118 - "Using Agent Skills"
 Cohesion: 0.13
@@ -933,12 +934,12 @@ Cohesion: 0.40
 Nodes (5): Attaching Screenshots and Videos to Pull Requests, From a local session, From CI, Limits, When to attach
 
 ### Community 158 - "Advanced Mocking with run-code"
-Cohesion: 0.40
-Nodes (5): Advanced Mocking with run-code, Conditional Response Based on Request, Delayed Response, Modify Real Response, Simulate Network Failures
+Cohesion: 0.22
+Nodes (8): Advanced Mocking with run-code, CLI Route Commands, Conditional Response Based on Request, Delayed Response, Modify Real Response, Request Mocking, Simulate Network Failures, URL Patterns
 
-### Community 159 - "2. Generate"
+### Community 159 - "Attaching to a Running Browser"
 Cohesion: 0.40
-Nodes (5): 2.1 Inputs, 2.2 Generate one scenario, 2.3 Generate multiple scenarios, 2.4 Run generated tests, 2. Generate
+Nodes (5): Attach by channel name, Attach via browser extension, Attach via CDP endpoint, Attaching to a Running Browser, Detach
 
 ### Community 160 - "ponytail-audit/SKILL.md"
 Cohesion: 0.40
@@ -973,16 +974,16 @@ Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
 
 ## Knowledge Gaps
-- **88 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **89 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Test generation (plan → generate → heal)` connect `3. Heal` to `playwright-cli/SKILL.md`, `2. Generate`?**
+- **Why does `Test generation (plan → generate → heal)` connect `3. Heal` to `playwright-cli/SKILL.md`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07094594594594594 - nodes in this community are weakly interconnected._
-- **Why does `2. Generate` connect `2. Generate` to `3. Heal`?**
+  _Cohesion score 0.07016434892541087 - nodes in this community are weakly interconnected._
+- **Why does `Video Recording` connect `Video Recording` to `playwright-cli/SKILL.md`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **Should `4. Component Stylings` be split into smaller, more focused modules?**
   _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
